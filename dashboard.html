@@ -95,6 +95,13 @@
         .debt { color: var(--accent-red); }
         .goal { color: var(--accent-blue); }
         
+        /* Canada Fund */
+        .canada-fund { grid-column: span 2; background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(139,92,246,0.2)); border: 1px solid var(--accent-red); }
+        @media (max-width: 768px) { .canada-fund { grid-column: span 1; } }
+        
+        .fund-bar { height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        .fund-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 10px; transition: width 0.5s; }
+        
         /* Teams */
         .team-list { display: flex; flex-direction: column; gap: 8px; }
         .team-item { display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 8px; }
@@ -124,12 +131,9 @@
         .system-label { font-size: 0.65rem; color: var(--text-secondary); }
         .system-value { font-size: 0.75rem; }
         
-        /* Customize Button */
-        .customize-btn { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: var(--accent-purple); border: none; border-radius: 25px; color: white; cursor: pointer; font-size: 0.85rem; box-shadow: 0 4px 15px rgba(139,92,246,0.4); }
-        
-        /* Edit Mode */
-        .editable { border: 1px dashed var(--accent-blue); padding: 4px 8px; }
-        .editable:focus { outline: none; border-color: var(--accent-green); background: rgba(16,185,129,0.1); }
+        /* Reddit */
+        .reddit-card { background: linear-gradient(135deg, rgba(255,69,0,0.2), rgba(255,140,0,0.2)); border: 1px solid #ff4500; }
+        .karma-value { font-size: 1.5rem; color: #ff4500; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -157,46 +161,107 @@
         </div>
         
         <div class="grid">
-            <!-- PRIORITIES -->
-            <div class="panel">
-                <div class="panel-title">🎯 TODAY'S PRIORITIES</div>
-                <ul class="priority-list">
-                    <li class="priority-item">
-                        <span class="priority-num p1">1</span>
-                        <span class="priority-text">Build Canada Fund</span>
-                    </li>
-                    <li class="priority-item">
-                        <span class="priority-num p2">2</span>
-                        <span class="priority-text">TuneVault Mobile</span>
-                    </li>
-                    <li class="priority-item">
-                        <span class="priority-num p3">3</span>
-                        <span class="priority-text">Edit MTB Video</span>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- MONEY -->
-            <div class="panel">
+            <!-- MONEY - FULL WIDTH -->
+            <div class="panel" style="grid-column: span 2;">
                 <div class="panel-title">💰 MONEY STATUS</div>
                 <div class="money-grid">
                     <div class="money-item">
-                        <div class="money-label">Monthly Income</div>
-                        <div class="money-value income">$8,067</div>
+                        <div class="money-label">Monthly Income (Teaching)</div>
+                        <div class="money-value income">$5,494.57</div>
                     </div>
                     <div class="money-item">
-                        <div class="money-label">Debt</div>
-                        <div class="money-value debt">$12,000</div>
+                        <div class="money-label">Side Income (Tintype/Books/etc)</div>
+                        <div class="money-value income">~$1,500</div>
                     </div>
                     <div class="money-item">
-                        <div class="money-label">Canada Fund</div>
-                        <div class="money-value goal">$0 / $10K</div>
+                        <div class="money-label">Monthly Expenses</div>
+                        <div class="money-value">$1,310-$1,510</div>
                     </div>
                     <div class="money-item">
-                        <div class="money-label">Expenses</div>
-                        <div class="money-value">~$800/mo</div>
+                        <div class="money-label">Potential Savings</div>
+                        <div class="money-value goal">~$5,000/mo</div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- CANADA FUND -->
+            <div class="panel canada-fund">
+                <div class="panel-title">🇨🇦 CANADA FUND (Tax Hold)</div>
+                <div class="money-grid">
+                    <div class="money-item">
+                        <div class="money-label">Target (Year End)</div>
+                        <div class="money-value goal">$5,000-$7,000</div>
+                    </div>
+                    <div class="money-item">
+                        <div class="money-label">US Cash Available</div>
+                        <div class="money-value">$8,792</div>
+                    </div>
+                </div>
+                <div class="fund-bar">
+                    <div class="fund-fill" style="width: 0%;"></div>
+                </div>
+                <div style="text-align: center; margin-top: 5px; font-size: 0.75rem; color: var(--text-secondary);">Move $ from US → Canada RBC</div>
+            </div>
+            
+            <!-- DEBT -->
+            <div class="panel">
+                <div class="panel-title">💳 DEBT</div>
+                <div class="money-grid">
+                    <div class="money-item">
+                        <div class="money-label">Citi Simplicity (0% APR)</div>
+                        <div class="money-value debt">$6,497</div>
+                    </div>
+                    <div class="money-item">
+                        <div class="money-label">Costco + US Bank + Amazon</div>
+                        <div class="money-value debt">$5,432</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; padding: 8px; background: rgba(239,68,68,0.1); border-radius: 8px; text-align: center;">
+                    <span class="money-label">TOTAL DEBT</span>
+                    <div class="money-value debt" style="font-size: 1.5rem;">$11,929</div>
+                </div>
+            </div>
+            
+            <!-- NET WORTH -->
+            <div class="panel">
+                <div class="panel-title">📊 NET WORTH</div>
+                <div class="money-grid">
+                    <div class="money-item">
+                        <div class="money-label">Cash (US)</div>
+                        <div class="money-value">$8,792</div>
+                    </div>
+                    <div class="money-item">
+                        <div class="money-label">Investments</div>
+                        <div class="money-value">$2,991</div>
+                    </div>
+                    <div class="money-item">
+                        <div class="money-label">Canada RBC</div>
+                        <div class="money-value goal">TBD</div>
+                    </div>
+                    <div class="money-item">
+                        <div class="money-label">Assets - Debt</div>
+                        <div class="money-value" style="color: var(--accent-yellow);">-$146</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PRIORITIES -->
+            <div class="panel">
+                <div class="panel-title">🎯 PRIORITIES</div>
+                <ul class="priority-list">
+                    <li class="priority-item">
+                        <span class="priority-num p1">1</span>
+                        <span class="priority-text">Maximize savings → Canada</span>
+                    </li>
+                    <li class="priority-item">
+                        <span class="priority-num p2">2</span>
+                        <span class="priority-text">Build passive income</span>
+                    </li>
+                    <li class="priority-item">
+                        <span class="priority-num p3">3</span>
+                        <span class="priority-text">Research BC property</span>
+                    </li>
+                </ul>
             </div>
             
             <!-- TEAMS -->
@@ -215,19 +280,31 @@
                     </div>
                     <div class="team-item">
                         <span class="team-emoji">🎻</span>
-                        <span class="team-name">Apps</span>
+                        <span class="team-name">TuneVault/App</span>
                         <div class="team-status active"></div>
                     </div>
                     <div class="team-item">
-                        <span class="team-emoji">🎨</span>
-                        <span class="team-name">Design</span>
+                        <span class="team-emoji">📸</span>
+                        <span class="team-name">Tintype</span>
                         <div class="team-status active"></div>
                     </div>
                     <div class="team-item">
-                        <span class="team-emoji">📹</span>
-                        <span class="team-name">Video</span>
+                        <span class="team-emoji">🤖</span>
+                        <span class="team-name">Reddit/Auto</span>
                         <div class="team-status active"></div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- REDDIT -->
+            <div class="panel reddit-card">
+                <div class="panel-title">🤖 REDDIT (Karma)</div>
+                <div style="text-align: center; padding: 10px;">
+                    <div class="karma-value">Building...</div>
+                    <div class="money-label">u/Dear_Morning2950</div>
+                </div>
+                <div class="links-grid" style="justify-content: center;">
+                    <a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" class="link-btn">View Profile</a>
                 </div>
             </div>
             
@@ -236,9 +313,9 @@
                 <div class="panel-title">🔗 QUICK LINKS</div>
                 <div class="links-grid">
                     <a href="https://jcyann.github.io/tunevault/" target="_blank" class="link-btn">🎻 TuneVault</a>
-                    <a href="https://jcyann.github.io/dashboard/" target="_blank" class="link-btn">📊 Flight Deck</a>
-                    <a href="https://ko-fi.com/headspacedesignstudio" target="_blank" class="link-btn">☕ Tip Jar</a>
-                    <a href="https://github.com/Jcyann" target="_blank" class="link-btn">🐙 GitHub</a>
+                    <a href="https://jcyann.github.io/voice-control.html" target="_blank" class="link-btn">🎤 Voice Panel</a>
+                    <a href="https://www.reddit.com/r/Bluegrass/" target="_blank" class="link-btn">💚 r/Bluegrass</a>
+                    <a href="https://www.reddit.com/r/banjo/" target="_blank" class="link-btn">� banjo</a>
                 </div>
             </div>
             
@@ -248,19 +325,19 @@
                 <div class="todo-list">
                     <div class="todo-column">
                         <h4>⏳ TO-DO</h4>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> TuneVault mobile PWA</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Add tip jar to TuneVault</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Edit MTB video</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Deploy Daily Zen</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Set up crypto wallet</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Move $ to Canada RBC</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Decide debt strategy</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Research BC property regions</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> BC teaching credential</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Scale passive income</label>
                     </div>
                     <div class="todo-column">
                         <h4>✅ ACCOMPLISHED</h4>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> TuneVault deployed</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> DaVinci installed</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> 3-layer memory</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> GitHub connected</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Teams set up</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> RBC account set up</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Reddit karma building</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Voice control panel</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Life plan documented</label>
+                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Financial brain dump captured</label>
                     </div>
                 </div>
             </div>
@@ -285,9 +362,9 @@
                         <div class="system-value">@Jcyann</div>
                     </div>
                     <div class="system-item">
-                        <div class="system-icon">📅</div>
-                        <div class="system-label">Next Event</div>
-                        <div class="system-value">7am</div>
+                        <div class="system-icon">⏰</div>
+                        <div class="system-label">Next Cron</div>
+                        <div class="system-value">1hr</div>
                     </div>
                 </div>
             </div>

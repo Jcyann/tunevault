@@ -184,17 +184,17 @@
                             <div class="team-emoji">🇨🇦</div>
                             <div class="team-name">Canada</div>
                         </div>
-                        <div class="team-card" onclick="showTeam('tunevault')">
-                            <div class="team-emoji">🎻</div>
-                            <div class="team-name">TuneVault</div>
-                        </div>
                         <div class="team-card" onclick="showTeam('tintype')">
                             <div class="team-emoji">📸</div>
                             <div class="team-name">Tintype</div>
                         </div>
-                        <div class="team-card" onclick="showTeam('reddit')">
-                            <div class="team-emoji">🤖</div>
-                            <div class="team-name">Reddit</div>
+                        <div class="team-card" onclick="showTeam('music')">
+                            <div class="team-emoji">🎵</div>
+                            <div class="team-name">Music</div>
+                        </div>
+                        <div class="team-card" onclick="showTeam('pod')">
+                            <div class="team-emoji">🎨</div>
+                            <div class="team-name">POD</div>
                         </div>
                     </div>
                 </div>
@@ -214,9 +214,9 @@
                 <div class="panel" style="margin-top: 12px;">
                     <div class="panel-title">🎯 PRIORITIES</div>
                     <ul class="priority-list">
-                        <li class="priority-item"><span class="priority-num p1">1</span><span class="priority-text">Maximize savings → Canada</span></li>
-                        <li class="priority-item"><span class="priority-num p2">2</span><span class="priority-text">Build passive income</span></li>
-                        <li class="priority-item"><span class="priority-num p3">3</span><span class="priority-text">Research BC property</span></li>
+                        <li class="priority-item"><span class="priority-num p1">1</span><span class="priority-text">🇨🇦 Maximize savings → Canada fund</span></li>
+                        <li class="priority-item"><span class="priority-num p2">2</span><span class="priority-text">📸 Grow Tintype income</span></li>
+                        <li class="priority-item"><span class="priority-num p3">3</span><span class="priority-text">🎵 Build music lessons audience</span></li>
                     </ul>
                 </div>
                 
@@ -349,42 +349,43 @@
         
         // TEAMS CONFIG
         const teams = {
-            finance: { emoji: '💰', title: 'Finance', items: [
+            finance: { emoji: '💰', title: '💰 Finance', items: [
                 { label: 'Income', value: '$6,994/mo' },
                 { label: 'Expenses', value: '$1,400/mo' },
                 { label: 'Savings', value: '~$5,600/mo' },
                 { label: 'Debt', value: '$11,929' },
-                { label: 'Focus', value: 'Tax hold' },
-                { label: 'Next', value: 'Transfer $' }
+                { label: 'Focus', value: 'Tax hold + growth' },
+                { label: 'Next', value: 'Transfer to RBC' }
             ]},
-            canada: { emoji: '🇨🇦', title: 'Canada Plan', items: [
+            canada: { emoji: '🇨🇦', title: '🇨🇦 Canada Plan', items: [
                 { label: 'Status', value: 'Planning' },
                 { label: 'Account', value: 'RBC ready' },
-                { label: 'Goal', value: '$7,000' },
-                { label: 'Saved', value: '$0' },
-                { label: 'Focus', value: 'Property' },
+                { label: 'Goal', value: '$7,000 tax fund' },
+                { label: 'Property', value: 'BC research' },
+                { label: 'Exit Plan', value: 'After school year' },
                 { label: 'Next', value: 'Transfer $' }
             ]},
-            tunevault: { emoji: '🎻', title: 'TuneVault', items: [
-                { label: 'Status', value: 'Building' },
-                { label: 'Tunes', value: '60+' },
-                { label: 'Users', value: 'Growing' },
-                { label: 'Revenue', value: '$0' },
-                { label: 'Focus', value: 'Add tunes' },
-                { label: 'Next', value: 'Deploy' }
-            ]},
-            tintype: { emoji: '📸', title: 'Tintype', items: [
-                { label: 'Status', value: 'Active' },
+            tintype: { emoji: '📸', title: '📸 Tintype', items: [
+                { label: 'Status', value: 'Active - BIG WIN' },
                 { label: 'Income', value: '~$1,000/mo' },
                 { label: 'Focus', value: 'Bookings' },
                 { label: 'Next', value: 'Edit portfolio' }
             ]},
-            reddit: { emoji: '🤖', title: 'Reddit', items: [
-                { label: 'Account', value: 'u/Dear_Morning2950' },
-                { label: 'Karma', value: 'Building' },
-                { label: 'Subs', value: '6 joined' },
-                { label: 'Focus', value: 'Build karma' },
-                { label: 'Next', value: 'Post content' }
+            music: { emoji: '🎵', title: '🎵 Music Lessons', items: [
+                { label: 'Status', value: 'Future income' },
+                { label: 'Skills', value: 'Banjo/Fiddle/Guitar' },
+                { label: 'Platform', value: 'Reddit → booking' },
+                { label: 'Rate', value: '$30-75/hr' },
+                { label: 'Focus', value: 'Build audience' },
+                { label: 'Next', value: 'Research pricing' }
+            ]},
+            pod: { emoji: '🎨', title: '🎨 POD & Video', items: [
+                { label: 'Status', value: 'Low priority' },
+                { label: 'Redbubble', value: 'Passive ~$200/mo' },
+                { label: 'Etsy', value: 'Starting' },
+                { label: 'DaVinci', value: 'Learn video editing' },
+                { label: 'Assets', value: 'Graphic designs ready' },
+                { label: 'Next', value: 'When time permits' }
             ]}
         };
         

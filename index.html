@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Old Time Tune Library - Search 60+ fiddle tunes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TuneVault">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎻</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>🎻 TuneVault - Old Time Tune Library</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-card: rgba(255,255,255,0.03); --text-primary: #e8e4dc; --text-secondary: #7a756c; --accent: #c9a227; --border: rgba(201, 162, 39, 0.15); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Georgia', serif; background: var(--bg-primary); min-height: 100vh; color: var(--text-primary); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; padding: 40px 0 30px; }
+        .logo { font-size: 3rem; }
+        h1 { font-size: 2.5rem; color: var(--accent); letter-spacing: 4px; margin-bottom: 5px; }
+        .tagline { color: var(--text-secondary); font-style: italic; }
+        
+        .search-box { background: var(--bg-card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-box input { flex: 1; padding: 15px; font-size: 1.1rem; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); font-family: inherit; }
+        .search-box input:focus { outline: none; border-color: var(--accent); }
+        .search-box button { padding: 15px 30px; font-size: 1rem; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        
+        .filters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .filter-group { background: var(--bg-card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .filter-group label { display: block; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; }
+        .filter-group select { width: 100%; padding: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; color: var(--text-primary); }
+        
+        .stats { padding: 15px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; margin-bottom: 20px; text-align: center; color: var(--accent); }
+        
+        .tune-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .tune-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 18px; cursor: pointer; transition: 0.3s; }
+        .tune-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .tune-card h3 { color: var(--accent); font-size: 1.1rem; margin-bottom: 5px; }
+        .tune-card .region { color: var(--text-secondary); font-size: 0.8rem; font-style: italic; margin-bottom: 8px; }
+        .tune-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+        .tag { padding: 3px 8px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; font-size: 0.7rem; color: var(--text-secondary); }
+        
+        .back-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
+        
+        .detail-view { display: none; }
+        .detail-view.active { display: block; }
+        .detail-header { background: rgba(201, 162, 39, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .detail-header h2 { font-size: 1.8rem; color: var(--accent); margin-bottom: 5px; }
+        .detail-header .region { color: var(--text-secondary); font-style: italic; }
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; }
+        
+        .instrument-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .instrument-card { background: var(--bg-secondary); border-radius: 10px; padding: 15px; border: 1px solid var(--border); }
+        .instrument-card h5 { color: var(--accent); font-size: 1rem; margin-bottom: 5px; }
+        
+        .source-link { display: block; padding: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; }
+        .source-link:hover { border-color: var(--accent); }
+        
+        .search-results { display: none; margin-bottom: 20px; }
+        .search-results.active { display: block; }
+        .search-result-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 10px; cursor: pointer; }
+        .search-result-item:hover { border-color: var(--accent); }
+        
+        @media (max-width: 600px) { .filters { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><div class="logo">🎻</div><h1>TUNEVAULT</h1><p class="tagline">Your old time tune treasure trove</p></header>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for a tune..." onkeypress="if(event.key==='Enter')doSearch()">
+            <button onclick="doSearch()">SEARCH</button>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group"><label>Instrument</label><select id="instrumentFilter" onchange="applyFilters()"><option value="">All</option><option value="fiddle">Fiddle</option><option value="banjo">Banjo</option><option value="guitar">Guitar</option></select></div>
+            <div class="filter-group"><label>Region</label><select id="sourceFilter" onchange="applyFilters()"><option value="">All</option><option value="appalachian">Appalachian</option><option value="kentucky">Kentucky</option><option value="virginia">Virginia</option><option value="georgia">Georgia</option></select></div>
+            <div class="filter-group"><label>Difficulty</label><select id="difficultyFilter" onchange="applyFilters()"><option value="">All</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option></select></div>
+            <div class="filter-group"><label>Key</label><select id="keyFilter" onchange="applyFilters()"><option value="">All</option><option value="G">G</option><option value="D">D</option><option value="A">A</option></select></div>
+        </div>
+        
+        <div class="stats" id="stats"><strong id="tuneCount">60</strong> tunes in the vault</div>
+        
+        <div class="search-results" id="searchResults"></div>
+        <div class="tune-grid" id="tuneGrid"></div>
+        
+        <div class="detail-view" id="detailView">
+            <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
+            <div class="detail-header"><h2 id="detailName"></h2><p class="region" id="detailRegion"></p></div>
+            <div class="detail-section"><h4>Keys & Difficulty</h4><div class="tune-meta" id="detailMeta"></div></div>
+            <div class="detail-section"><h4>Instruments</h4><div class="instrument-row" id="detailInstruments"></div></div>
+            <div class="detail-section"><h4>External Resources</h4><div id="detailLinks"></div></div>
+        </div>
+    </div>
+    
+    <script>
+const tuneDatabase = [
+{ name: "Old Joe Clark", region: "Appalachian / Southern", keys: ["A", "G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard G", "Double C", "Cross A"] } }, description: "One of the most popular old time tunes." },
+{ name: "Cripple Creek", region: "Virginia / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Classic first tune." },
+{ name: "Arkansas Traveler", region: "Ozarks / Arkansas", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Classic fiddler's tune." },
+{ name: "Salt River", region: "Kentucky / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Up-tempo D tune." },
+{ name: "Bill Cheatham", region: "Tennessee / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Beautiful A-tune." },
+{ name: "Pretty Saro", region: "Virginia / Appalachian", keys: ["D", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Haunting modal tune." },
+{ name: "June Apple", region: "Virginia / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Driving A tune." },
+{ name: "Cluck Old Hen", region: "Georgia / Appalachian", keys: ["A", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Ragtime-style tune." },
+{ name: "Twin Sisters", region: "Appalachian", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple G tune." },
+{ name: "Fireball Mail", region: "Tennessee / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Fast-paced D tune." },
+{ name: "Kitchen Girl", region: "Virginia / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Great for cross-tuning." },
+{ name: "Liberty", region: "Appalachian / Tennessee", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Classic cross-tuning tune." },
+{ name: "St. Anne's Reel", region: "Irish-American", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Popular reel." },
+{ name: "Cherokee Shuffle", region: "Appalachian / Tennessee", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "A-tune with shuffle." },
+{ name: "Cumberland Gap", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple G tune." },
+{ name: "Turkey in the Straw", region: "American", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous folk tune." },
+{ name: "Wildwood Flower", region: "Appalachian / American", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard G"] } }, description: "Classic American folk." },
+{ name: "Nine Pound Hammer", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { guitar: { tunings: ["Open G"] } }, description: "Blues/old time classic." },
+{ name: "Over the Waterfall", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic tune." },
+{ name: "Rocky Top", region: "Tennessee / Country", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous country tune." },
+{ name: "I'll Fly Away", region: "Gospel / Appalachian", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Gospel standard." },
+{ name: "Soldier's Joy", region: "American", keys: ["D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Essential tune." },
+{ name: "Cindy", region: "Appalachian", keys: ["D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Famous folk tune." },
+{ name: "Fisher's Hornpipe", region: "Irish-American", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic hornpipe." },
+{ name: "Blackberry Blossom", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Popular tune." },
+{ name: "Red Haired Boy", region: "Irish-American / Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Popular A tune." },
+{ name: "Devil's Dream", region: "Appalachian / Irish", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Famous reel." },
+{ name: "Mississippi Sawyer", region: "Midwest / Ozarks", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Up-tempo D tune." },
+{ name: "Squirrel Hunters Reel", region: "Appalachian", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Fast reel." },
+{ name: "Sally Gooden", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic tune." },
+{ name: "Jeff Sturgeon", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Virginia tune." },
+{ name: "Breaking Up Christmas", region: "Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Christmas classic." },
+{ name: "Chinquapin Hunting", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "A tune." },
+{ name: "Little Liza Jane", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Simple, fun tune." },
+{ name: "Wayfaring Stranger", region: "Appalachian / Traditional", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard"] } }, description: "Haunting folk tune." },
+{ name: "Man of Constant Sorrow", region: "Appalachian", keys: ["D", "G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] }, guitar: { tunings: ["Standard"] } }, description: "Famous folk tune." },
+{ name: "Tom Dooley", region: "North Carolina / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous folk tune." },
+{ name: "Shady Grove", region: "Appalachian / Virginia", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple tune." },
+{ name: "Boatman", region: "Appalachian / Southern", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Classic A tune." },
+{ name: "Greasy Coat", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Classic A tune." },
+{ name: "Salt Creek", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Virginia classic." },
+{ name: "Sandy Boys", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "A tune." },
+{ name: "Stay All Night", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Simple A tune." },
+{ name: "Tater Patch", region: "Appalachian / Southern", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Simple tune." },
+{ name: "Granny Does Your Dog Bite", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Fun A tune." },
+{ name: "Quail is a Pretty Bird", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Sweet A tune." },
+{ name: "Big Sciota", region: "Appalachian / Ohio", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] } }, description: "Ohio classic." },
+{ name: "Seneca Square Dance", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." },
+{ name: "Shove That Pig's Foot", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic tune." },
+{ name: "Temperance Reel", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Popular reel." },
+{ name: "Hangman's Reel", region: "Appalachian / Canada", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Famous reel." },
+{ name: "Half Past Four", region: "Appalachian", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Complex A tune." },
+{ name: "Money Musk", region: "Scottish / American", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Popular reel." },
+{ name: "Bonaparte's Retreat", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "A tune." },
+{ name: "Angeline the Baker", region: "Irish-American", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Classic reel." },
+{ name: "Eighth of January", region: "American / Historical", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Historical tune." },
+{ name: "Flop Eared Mule", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic tune." },
+{ name: "Gray Cat", region: "Appalachian / Virginia", keys: ["D"], difficulty: "Advanced", instruments: { banjo: { tunings: ["Standard D"] } }, description: "Complex tune." },
+{ name: "John Brown's Dream", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G", "Double C"] } }, description: "Syncopated clawhammer." },
+{ name: "Banjo Pickin' Girl", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic clawhammer tune." },
+{ name: "John the Weaver", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic Virginia tune." },
+{ name: "Dueling Banjos", region: "Appalachian / Delaware", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard"] } }, description: "Famous from Deliverance." },
+{ name: "Dance All Night", region: "Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." }
+];
+
+function doSearch() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!query) { applyFilters(); return; }
+    
+    const results = tuneDatabase.filter(t => t.name.toLowerCase().includes(query) || t.region.toLowerCase().includes(query));
+    
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('searchResults').classList.add('active');
+    document.getElementById('stats').innerHTML = '<strong>' + results.length + '</strong> tunes found for "' + query + '"';
+    
+    document.getElementById('searchResults').innerHTML = results.map((tune, idx) => 
+        '<div class="search-result-item" onclick="showTune(' + idx + ')"><h3>' + tune.name + '</h3><p class="region">' + tune.region + '</p><div class="tune-meta"><span class="tag">' + tune.keys.join(', ') + '</span><span class="tag">' + tune.difficulty + '</span></div></div>'
+    ).join('');
+}
+
+function applyFilters() {
+    const instrument = document.getElementById('instrumentFilter').value;
+    const source = document.getElementById('sourceFilter').value;
+    const difficulty = document.getElementById('difficultyFilter').value;
+    const key = document.getElementById('keyFilter').value;
+    
+    let filtered = tuneDatabase;
+    if (instrument) filtered = filtered.filter(t => t.instruments[instrument]);
+    if (source) filtered = filtered.filter(t => t.region.toLowerCase().includes(source));
+    if (difficulty) filtered = filtered.filter(t => t.difficulty.toLowerCase() === difficulty);
+    if (key) filtered = filtered.filter(t => t.keys.includes(key));
+    
+    displayTunes(filtered);
+}
+
+function displayTunes(tunes) {
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('tuneGrid').style.display = 'grid';
+    document.getElementById('stats').innerHTML = '<strong>' + tunes.length + '</strong> tunes in the vault';
+    
+    document.getElementById('tuneGrid').innerHTML = tunes.map((tune, idx) => {
+        const actualIdx = tuneDatabase.indexOf(tune);
+        return '<div class="tune-card" onclick="showTune(' + actualIdx + ')"><h3>' + tune.name + '</h3><p class="region">' + tune.region + '</p><div class="tune-meta"><span class="tag">' + tune.keys.join(', ') + '</span><span class="tag">' + tune.difficulty + '</span></div></div>';
+    }).join('');
+}
+
+function showTune(idx) {
+    const tune = tuneDatabase[idx];
+    document.getElementById('detailName').textContent = tune.name;
+    document.getElementById('detailRegion').textContent = tune.region;
+    document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">' + k + '</span>').join('') + '<span class="tag">' + tune.difficulty + '</span>';
+    
+    let instrumentsHTML = '';
+    for (const [instrument, data] of Object.entries(tune.instruments)) {
+        instrumentsHTML += '<div class="instrument-card"><h5>' + instrument.charAt(0).toUpperCase() + instrument.slice(1) + '</h5><p style="font-size:0.8rem;color:var(--text-secondary)">Tunings: ' + data.tunings.join(', ') + '</p></div>';
+    }
+    document.getElementById('detailInstruments').innerHTML = instrumentsHTML;
+    
+    document.getElementById('detailLinks').innerHTML = 
+        '<a href="https://www.taterjoes.com/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Tater Joe\'s - Search</a>' +
+        '<a href="https://www.banjohangout.org/search.asp?Search=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Banjo Hangout - Search</a>' +
+        '<a href="https://www.slippery-hill.com/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🎵 Slippery Hill - Search</a>' +
+        '<a href="https://www.loc.gov/search/?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">📚 Library of Congress - Search</a>' +
+        '<a href="https://tunepal.org/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🎼 TunePal - Search</a>' +
+        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(tune.name + ' old time fiddle') + '" target="_blank" class="source-link">🎥 YouTube - Search</a>';
+    
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('detailView').classList.add('active');
+}
+
+function showLibrary() {
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('tuneGrid').style.display = 'grid';
+    applyFilters();
+}
+
+displayTunes(tuneDatabase);
+
+// PWA Service Worker for offline use
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+    </script>
+</body>
+</html>

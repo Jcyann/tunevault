@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Voice Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-primary: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.listening {
+            background: var(--accent-green);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .voice-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-cyan);
+            background: var(--bg-card);
+            cursor: pointer;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        
+        .voice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.5);
+        }
+        
+        .voice-btn.listening {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.5);
+            animation: listening 1s infinite;
+        }
+        
+        @keyframes listening {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .voice-btn svg {
+            width: 50px;
+            height: 50px;
+            fill: var(--accent-cyan);
+        }
+        
+        .voice-btn.listening svg {
+            fill: var(--accent-green);
+        }
+        
+        .transcript {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 80px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .transcript-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .transcript-text {
+            font-size: 1.3rem;
+            color: var(--accent-cyan);
+            min-height: 30px;
+        }
+        
+        .commands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .command-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .command-card h3 {
+            color: var(--accent-purple);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .command-examples {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        
+        .command-examples span {
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            display: inline-block;
+        }
+        
+        .log {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .log-entry.success {
+            border-color: var(--accent-green);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        
+        .log-entry.error {
+            border-color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.05);
+        }
+        
+        .time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .system-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .system-item .icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .system-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .system-item .value {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 Max Voice Control</h1>
+            <p>Your AI Assistant - Voice Activated</p>
+            
+            <button class="voice-btn" id="voiceBtn">
+                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V19h4v2H8v-2h4v-3.07z"/></svg>
+            </button>
+            
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Click to speak</span>
+            </div>
+            
+            <div class="system-status">
+                <div class="system-item">
+                    <div class="icon">🧠</div>
+                    <div class="label">Max</div>
+                    <div class="value" id="maxStatus">Online</div>
+                </div>
+                <div class="system-item">
+                    <div class="icon">🌐</div>
+                    <div class="label">Gateway</div>
+                    <div class="value" id="gatewayStatus">Connected</div>
+                </div>
+                <div class="system-item">
+                    <div class="icon">📱</div>
+                    <div class="label">Reddit</div>
+                    <div class="value" id="redditStatus">1 Account</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="transcript">
+            <div class="transcript-label">What you said:</div>
+            <div class="transcript-text" id="transcript">...</div>
+        </div>
+        
+        <div class="commands">
+            <div class="command-card">
+                <h3>📊 Status & Info</h3>
+                <div class="command-examples">
+                    <span>"What's the weather?"</span>
+                    <span>"How much money do I have?"</span>
+                    <span>"Show my tasks"</span>
+                    <span>"System status"</span>
+                </div>
+            </div>
+            <div class="command-card">
+                <h3>🎵 Media Control</h3>
+                <div class="command-examples">
+                    <span>"Play some music"</span>
+                    <span>"Pause"</span>
+                    <span>"Next song"</span>
+                    <span>"Volume up/down"</span>
+                </div>
+            </div>
+            <div class="command-card">
+                <h3>💻 Computer Actions</h3>
+                <div class="command-examples">
+                    <span>"Open Safari"</span>
+                    <span>"Take a screenshot"</span>
+                    <span>"Open terminal"</span>
+                    <span>"Close this window"</span>
+                </div>
+            </div>
+            <div class="command-card">
+                <h3>📝 Tasks & Notes</h3>
+                <div class="command-examples">
+                    <span>"Add task [task]"</span>
+                    <span>"What's on my calendar?"</span>
+                    <span>"Remind me to [thing]"</span>
+                    <span>"Show my projects"</span>
+                </div>
+            </div>
+            <div class="command-card">
+                <h3>🌐 Web & Reddit</h3>
+                <div class="command-examples">
+                    <span>"Check Reddit"</span>
+                    <span>"Post to Reddit"</span>
+                    <span>"Search for [topic]"</span>
+                    <span>"Check my karma"</span>
+                </div>
+            </div>
+            <div class="command-card">
+                <h3>🔧 Automation</h3>
+                <div class="command-examples">
+                    <span>"Build my Reddit karma"</span>
+                    <span>"Run morning report"</span>
+                    <span>"Check emails"</span>
+                    <span>"Deploy the app"</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="log">
+            <div class="transcript-label">Activity Log:</div>
+            <div id="logEntries">
+                <div class="log-entry">
+                    <span class="time">07:45</span>
+                    Voice panel initialized
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>🦞 Powered by Max | Voice Control v1.0</p>
+            <p style="margin-top: 10px; font-size: 0.75rem;">
+                Works best in Chrome/Safari with microphone permissions enabled
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        const voiceBtn = document.getElementById('voiceBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const transcript = document.getElementById('transcript');
+        const logEntries = document.getElementById('logEntries');
+        
+        let recognition;
+        let isListening = false;
+        
+        // Check browser support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (!SpeechRecognition) {
+            statusText.textContent = 'Voice not supported in this browser';
+            voiceBtn.style.opacity = '0.5';
+            voiceBtn.style.cursor = 'not-allowed';
+            addLog('Voice recognition not supported', 'error');
+        } else {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isListening = true;
+                voiceBtn.classList.add('listening');
+                statusDot.classList.add('listening');
+                statusText.textContent = 'Listening...';
+                transcript.textContent = '...';
+                addLog('Voice recognition started');
+            };
+            
+            recognition.onend = () => {
+                isListening = false;
+                voiceBtn.classList.remove('listening');
+                statusDot.classList.remove('listening');
+                statusText.textContent = 'Click to speak';
+            };
+            
+            recognition.onerror = (event) => {
+                addLog('Error: ' + event.error, 'error');
+                statusText.textContent = 'Error - try again';
+            };
+            
+            recognition.onresult = (event) => {
+                const result = event.results[0][0].transcript;
+                transcript.textContent = result;
+                processCommand(result.toLowerCase());
+            };
+        }
+        
+        voiceBtn.addEventListener('click', () => {
+            if (recognition && !isListening) {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    addLog('Already listening', 'error');
+                }
+            }
+        });
+        
+        function processCommand(command) {
+            addLog('Heard: "' + command + '"');
+            
+            // Status queries
+            if (command.includes('weather')) {
+                addLog('🌤️ Checking weather...', 'success');
+                // Could trigger API call to Max
+            } else if (command.includes('money') || command.includes('finance') || command.includes('income')) {
+                addLog('💰 Checking finances...', 'success');
+            } else if (command.includes('task')) {
+                addLog('📋 Checking tasks...', 'success');
+            } else if (command.includes('system status')) {
+                addLog('📊 Getting system status...', 'success');
+            } 
+            // Reddit
+            else if (command.includes('reddit karma')) {
+                addLog('🎯 Building Reddit karma...', 'success');
+            } else if (command.includes('check reddit')) {
+                addLog('🌐 Checking Reddit...', 'success');
+            }
+            // Computer actions
+            else if (command.includes('open')) {
+                addLog('💻 Opening application...', 'success');
+            } else if (command.includes('screenshot')) {
+                addLog('📸 Taking screenshot...', 'success');
+            }
+            // Automation
+            else if (command.includes('morning') || command.includes('report')) {
+                addLog('🌅 Running morning report...', 'success');
+            } else if (command.includes('email') || command.includes('mail')) {
+                addLog('📧 Checking emails...', 'success');
+            } else {
+                addLog('🤔 Command received - processing...', 'success');
+            }
+        }
+        
+        function addLog(message, type = '') {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.innerHTML = `<span class="time">${time}</span>${message}`;
+            
+            logEntries.insertBefore(entry, logEntries.firstChild);
+            
+            // Keep only last 20 entries
+            while (logEntries.children.length > 20) {
+                logEntries.removeChild(logEntries.lastChild);
+            }
+        }
+        
+        // Update system status
+        document.getElementById('gatewayStatus').textContent = 'Online';
+    </script>
+</body>
+</html>

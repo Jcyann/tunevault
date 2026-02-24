@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a0f">
-    <meta name="description" content="Old Time Tune Library - Search 60+ fiddle tunes">
+    <meta name="description" content="Old Time Tune Library - Search 70+ fiddle tunes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TuneVault">
@@ -41,6 +41,16 @@
         .tune-meta { display: flex; gap: 5px; flex-wrap: wrap; }
         .tag { padding: 3px 8px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; font-size: 0.7rem; color: var(--text-secondary); }
         
+        /* Surprise Tune Banner */
+        .surprise-banner { background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(139, 90, 43, 0.3) 100%); border: 2px solid var(--accent); border-radius: 15px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s ease; animation: pulse-glow 2s ease-in-out infinite; }
+        .surprise-banner:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(201, 162, 39, 0.3); }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 10px rgba(201, 162, 39, 0.2); } 50% { box-shadow: 0 0 20px rgba(201, 162, 39, 0.4); } }
+        .surprise-icon { font-size: 2rem; }
+        .surprise-text { flex: 1; }
+        .surprise-text strong { display: block; color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .surprise-text span { color: var(--text-primary); font-size: 1.1rem; font-weight: bold; }
+        .surprise-btn { background: var(--accent); color: var(--bg-primary); padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+        
         .back-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
         
         .detail-view { display: none; }
@@ -70,6 +80,16 @@
     <div class="container">
         <header><div class="logo">🎻</div><h1>TUNEVAULT</h1><p class="tagline">Your old time tune treasure trove</p></header>
         
+        <!-- Surprise Tune of the Day -->
+        <div class="surprise-banner" id="surpriseBanner" onclick="showSurpriseTune()">
+            <div class="surprise-icon">🎁</div>
+            <div class="surprise-text">
+                <strong>Today's Surprise Tune</strong>
+                <span id="surpriseTuneName">Click to discover!</span>
+            </div>
+            <div class="surprise-btn">LISTEN</div>
+        </div>
+        
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Search for a tune..." onkeypress="if(event.key==='Enter')doSearch()">
             <button onclick="doSearch()">SEARCH</button>
@@ -82,7 +102,7 @@
             <div class="filter-group"><label>Key</label><select id="keyFilter" onchange="applyFilters()"><option value="">All</option><option value="G">G</option><option value="D">D</option><option value="A">A</option></select></div>
         </div>
         
-        <div class="stats" id="stats"><strong id="tuneCount">60</strong> tunes in the vault</div>
+        <div class="stats" id="stats"><strong id="tuneCount">73</strong> tunes in the vault</div>
         
         <div class="search-results" id="searchResults"></div>
         <div class="tune-grid" id="tuneGrid"></div>
@@ -154,13 +174,23 @@ const tuneDatabase = [
 { name: "Bonaparte's Retreat", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "A tune." },
 { name: "Angeline the Baker", region: "Irish-American", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Classic reel." },
 { name: "Eighth of January", region: "American / Historical", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Historical tune." },
-{ name: "Flop Eared Mule", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic tune." },
 { name: "Gray Cat", region: "Appalachian / Virginia", keys: ["D"], difficulty: "Advanced", instruments: { banjo: { tunings: ["Standard D"] } }, description: "Complex tune." },
 { name: "John Brown's Dream", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G", "Double C"] } }, description: "Syncopated clawhammer." },
 { name: "Banjo Pickin' Girl", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic clawhammer tune." },
 { name: "John the Weaver", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic Virginia tune." },
 { name: "Dueling Banjos", region: "Appalachian / Delaware", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard"] } }, description: "Famous from Deliverance." },
-{ name: "Dance All Night", region: "Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." }
+{ name: "Dance All Night", region: "Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." },
+{ name: "Flop-Eared Mule", region: "Appalachian / Southern", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Classic ragtime tune." },
+{ name: "Cotton Eyed Joe", region: "American / Southern", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Traditional folk tune." },
+{ name: "Green Willis", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Old-time favorite." },
+{ name: "Katy Hill", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Simple A-tune for beginners." },
+{ name: "Little Billy Wilson", region: "Appalachian / North Carolina", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Traditional North Carolina tune." },
+{ name: "Ida Red", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Old-time Virginia tune." },
+{ name: "Boys of Blue Hill", region: "New England / Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic New England tune." },
+{ name: "New Rigged Ship", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Jig commonly played in old time." },
+{ name: "Sister Ann", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Traditional tune." },
+{ name: "Out on the Ocean", region: "Irish-American", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple jig popular in old time circles." },
+{ name: "Ballydesmond Polka", region: "Irish-American", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Polka popular in old time music." }
 ];
 
 function doSearch() {
@@ -192,6 +222,27 @@ function applyFilters() {
     if (key) filtered = filtered.filter(t => t.keys.includes(key));
     
     displayTunes(filtered);
+}
+
+// Surprise Tune of the Day - changes daily based on date
+function getDailySurpriseIndex() {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    return seed % tuneDatabase.length;
+}
+
+let currentSurpriseIdx = -1;
+
+function showSurpriseTune() {
+    if (currentSurpriseIdx === -1) {
+        currentSurpriseIdx = getDailySurpriseIndex();
+    } else {
+        // Get a random different tune on click
+        currentSurpriseIdx = Math.floor(Math.random() * tuneDatabase.length);
+    }
+    const tune = tuneDatabase[currentSurpriseIdx];
+    document.getElementById('surpriseTuneName').textContent = tune.name;
+    showTune(currentSurpriseIdx);
 }
 
 function displayTunes(tunes) {

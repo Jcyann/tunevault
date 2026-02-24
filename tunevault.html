@@ -60,6 +60,7 @@
         .detail-header h2 { font-size: 1.8rem; color: var(--accent); margin-bottom: 5px; }
         .detail-header .region { color: var(--text-secondary); font-style: italic; }
         .detail-section { margin-bottom: 20px; }
+.detail-section { margin-bottom: 20px; }
         .detail-section h4 { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; }
         
         .instrument-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
@@ -116,6 +117,18 @@
         <div class="detail-view" id="detailView">
             <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
             <div class="detail-header"><h2 id="detailName"></h2><p class="region" id="detailRegion"></p></div>
+            
+            <!-- YouTube Player -->
+            <div class="detail-section">
+                <h4>🎥 Listen</h4>
+                <div id="youtubePlayer" style="display:none;">
+                    <iframe id="ytIframe" width="100%" height="200" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div id="youtubeSearch" style="text-align:center; padding:15px;">
+                    <button onclick="searchYouTube()" style="background:var(--accent);color:var(--bg-primary);border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;">🎵 Find & Play Recording</button>
+                </div>
+            </div>
+            
             <div class="detail-section"><h4>Keys & Difficulty</h4><div class="tune-meta" id="detailMeta"></div></div>
             <div class="detail-section"><h4>Instruments</h4><div class="instrument-row" id="detailInstruments"></div></div>
             <div class="detail-section"><h4>External Resources</h4><div id="detailLinks"></div></div>
@@ -269,6 +282,12 @@ function showTune(idx) {
     document.getElementById('detailRegion').textContent = tune.region;
     document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">' + k + '</span>').join('') + '<span class="tag">' + tune.difficulty + '</span>';
     
+    // Reset YouTube player
+    document.getElementById('youtubePlayer').style.display = 'none';
+    document.getElementById('ytIframe').src = '';
+    document.getElementById('youtubeSearch').style.display = 'block';
+    window.currentTuneName = tune.name;
+    
     let instrumentsHTML = '';
     for (const [instrument, data] of Object.entries(tune.instruments)) {
         instrumentsHTML += '<div class="instrument-card"><h5>' + instrument.charAt(0).toUpperCase() + instrument.slice(1) + '</h5><p style="font-size:0.8rem;color:var(--text-secondary)">Tunings: ' + data.tunings.join(', ') + '</p></div>';
@@ -286,6 +305,24 @@ function showTune(idx) {
     document.getElementById('tuneGrid').style.display = 'none';
     document.getElementById('searchResults').classList.remove('active');
     document.getElementById('detailView').classList.add('active');
+}
+
+// Search YouTube and embed first result
+function searchYouTube() {
+    const tuneName = window.currentTuneName || '';
+    if (!tuneName) return;
+    
+    const searchQuery = tuneName + ' old time fiddle';
+    const ytContainer = document.getElementById('youtubePlayer');
+    const searchBtn = document.getElementById('youtubeSearch');
+    
+    searchBtn.innerHTML = '<span style="color:var(--accent)">🔍 Searching...</span>';
+    
+    // Use YouTube embed with search query - it will show results user can click
+    const embedUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery);
+    document.getElementById('ytIframe').src = embedUrl + '&autoplay=1';
+    ytContainer.style.display = 'block';
+    searchBtn.style.display = 'none';
 }
 
 function showLibrary() {

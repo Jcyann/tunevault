@@ -168,6 +168,17 @@
             <div class="quote-author">— Daily Wisdom</div>
         </div>
         
+        <!-- HEADLINE TICKER -->
+        <div class="ticker-section">
+            <div class="ticker-label">📰 HEADLINES</div>
+            <div class="ticker-content" id="tickerContent">
+                <span>BTC: $95,420 (+2.1%)</span> •
+                <span>S&P 500: +0.3%</span> •
+                <span>Gold: $2,950 (+0.8%)</span> •
+                <span>BTC: $95,420 (+2.1%)</span>
+            </div>
+        </div>
+        
         <!-- GRID -->
         <div class="grid">
             <!-- LEFT COLUMN -->
@@ -224,13 +235,13 @@
                 <div class="panel" style="margin-top: 12px;">
                     <div class="panel-title">💰 FINANCE</div>
                     <div class="finance-grid">
-                        <div class="finance-item"><div class="finance-label">Teaching</div><div class="finance-value income">$5,494</div></div>
-                        <div class="finance-item"><div class="finance-label">Side Income</div><div class="finance-value income">~$1,500</div></div>
-                        <div class="finance-item"><div class="finance-label">Expenses</div><div class="finance-value">$1,400</div></div>
-                        <div class="finance-item"><div class="finance-label">Savings</div><div class="finance-value goal">~$5,600</div></div>
+                        <div class="finance-item"><div class="finance-label">Income</div><div class="finance-value income">$8,067/mo</div></div>
+                        <div class="finance-item"><div class="finance-label">Side Income</div><div class="finance-value income">~$1,200</div></div>
+                        <div class="finance-item"><div class="finance-label">Expenses</div><div class="finance-value">$800</div></div>
+                        <div class="finance-item"><div class="finance-label">Savings</div><div class="finance-value goal">~$6,267</div></div>
                     </div>
                     <div class="fund-section">
-                        <div class="fund-header"><span class="fund-title">🇨🇦 Canada Fund</span><span class="fund-target">Target: $<span id="targetAmount">7,000</span></span></div>
+                        <div class="fund-header"><span class="fund-title">🇨🇦 Canada Fund</span><span class="fund-target">Target: $<span id="targetAmount">10,000</span></span></div>
                         <div class="fund-bar"><div class="fund-fill" id="fundFill" style="width: 0%;"></div></div>
                         <div class="fund-stats"><span>$<span id="currentAmount">0</span> saved</span><span id="percentText">0%</span></div>
                     </div>
@@ -283,15 +294,15 @@
                     <div style="display: grid; gap: 6px;">
                         <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
                             <span>Citi Simplicity</span>
-                            <span style="color: #ef4444;">$6,497</span>
+                            <span style="color: #ef4444;">~$6,500</span>
                         </div>
                         <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
                             <span>Other Cards</span>
-                            <span style="color: #ef4444;">$5,432</span>
+                            <span style="color: #ef4444;">~$5,500</span>
                         </div>
                         <div style="background: rgba(239,68,68,0.15); padding: 10px; border-radius: 6px; text-align: center; margin-top: 4px;">
                             <div style="font-size: 0.65rem; color: var(--text-secondary);">TOTAL</div>
-                            <div style="font-size: 1.2rem; color: #ef4444; font-weight: bold;">$11,929</div>
+                            <div style="font-size: 1.2rem; color: #ef4444; font-weight: bold;">$12,000</div>
                         </div>
                     </div>
                 </div>
@@ -300,10 +311,21 @@
                 <div class="panel reddit-card" style="margin-top: 12px;">
                     <div class="panel-title">🤖 REDDIT</div>
                     <div style="text-align: center; padding: 10px;">
-                        <div class="karma-value">Building...</div>
-                        <div style="font-size: 0.65rem; color: var(--text-secondary);">u/Dear_Morning2950</div>
+                        <div class="karma-value"><a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" style="color: inherit; text-decoration: none;">Building...</a></div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary);"><a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" style="color: inherit; text-decoration: none;">u/Dear_Morning2950</a></div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- ACTIONS -->
+        <div class="panel" style="margin-top: 12px; background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(59,130,246,0.15) 100%); border: 1px solid rgba(139,92,246,0.3);">
+            <div class="panel-title">⚡ ACTIONS</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+                <button onclick="runKarmaBuild()" class="link-btn" style="background: rgba(255,107,107,0.2); border-color: rgba(255,107,107,0.4); cursor: pointer;">🔄 Run Karma</button>
+                <button onclick="checkEmail()" class="link-btn" style="background: rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.4); cursor: pointer;">📧 Check Email</button>
+                <button onclick="checkCalendar()" class="link-btn" style="background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.4); cursor: pointer;">📅 Calendar</button>
+                <button onclick="refreshDashboard()" class="link-btn" style="background: rgba(251,191,36,0.2); border-color: rgba(251,191,36,0.4); cursor: pointer;">🔁 Refresh</button>
             </div>
         </div>
         
@@ -318,6 +340,7 @@
                 <a href="https://jcyann.github.io/tunevault/money.html" target="_blank" class="link-btn">💰 Money</a>
                 <a href="https://jcyann.github.io/tunevault/task-master.html" target="_blank" class="link-btn">📝 Tasks</a>
                 <a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" class="link-btn">👤 Our Reddit</a>
+                <a href="https://www.youtube.com/@jasonchinchen" target="_blank" class="link-btn">📺 YouTube</a>
                 <a href="https://www.amazon.com/author/jason" target="_blank" class="link-btn">📚 Our Books</a>
                 <a href="https://www.redbubble.com/people/HeadSpaceDesign" target="_blank" class="link-btn">🎨 Redbubble</a>
                 <a href="https://github.com/Jcyann" target="_blank" class="link-btn">🐙 GitHub</a>
@@ -333,7 +356,7 @@
             <h2>⚙️ Canada Fund</h2>
             <div class="form-group">
                 <label>Target ($)</label>
-                <input type="number" id="settingsTarget" value="7000">
+                <input type="number" id="settingsTarget" value="10000">
             </div>
             <div class="form-group">
                 <label>Current ($)</label>
@@ -346,22 +369,21 @@
     
     <script>
         // DATA
-        let data = JSON.parse(localStorage.getItem('clawdeck-v4')) || { target: 7000, current: 0 };
+        let data = JSON.parse(localStorage.getItem('clawdeck-v4')) || { target: 10000, current: 0 };
         
         // TEAMS CONFIG
         const teams = {
             finance: { emoji: '💰', title: '💰 Finance', items: [
-                { label: 'Income', value: '$6,994/mo' },
-                { label: 'Expenses', value: '$1,400/mo' },
-                { label: 'Savings', value: '~$5,600/mo' },
-                { label: 'Debt', value: '$11,929' },
+                { label: 'Income', value: '$8,067/mo' },
+                { label: 'Expenses', value: '$800/mo' },
+                { label: 'Savings', value: '~$6,267/mo' },
                 { label: 'Focus', value: 'Tax hold + growth' },
                 { label: 'Next', value: 'Transfer to RBC' }
             ]},
             canada: { emoji: '🇨🇦', title: '🇨🇦 Canada Plan', items: [
                 { label: 'Status', value: 'Planning' },
                 { label: 'Account', value: 'RBC ready' },
-                { label: 'Goal', value: '$7,000 tax fund' },
+                { label: 'Goal', value: '$10,000 tax fund' },
                 { label: 'Property', value: 'BC research' },
                 { label: 'Exit Plan', value: 'After school year' },
                 { label: 'Next', value: 'Transfer $' }
@@ -441,6 +463,23 @@
             document.getElementById('targetAmount').textContent = data.target.toLocaleString();
             document.getElementById('currentAmount').textContent = data.current.toLocaleString();
             document.getElementById('percentText').textContent = Math.round(percent) + '%';
+        }
+        
+        // ACTIONS
+        function runKarmaBuild() {
+            window.open('https://www.reddit.com/', '_blank');
+        }
+        function checkEmail() {
+            window.open('https://mail.google.com/mail/u/0/', '_blank');
+        }
+        function checkCalendar() {
+            window.open('https://calendar.google.com/calendar/', '_blank');
+        }
+        function generateImage() {
+            window.open('https://app.leonardo.ai/', '_blank');
+        }
+        function refreshDashboard() {
+            location.reload();
         }
         
         updateProgress();

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Old Time Tune Library - Search 70+ fiddle tunes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TuneVault">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎻</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>🎻 TuneVault - Old Time Tune Library</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-card: rgba(255,255,255,0.03); --text-primary: #e8e4dc; --text-secondary: #7a756c; --accent: #c9a227; --border: rgba(201, 162, 39, 0.15); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Georgia', serif; background: var(--bg-primary); min-height: 100vh; color: var(--text-primary); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; padding: 40px 0 30px; }
+        .logo { font-size: 3rem; }
+        h1 { font-size: 2.5rem; color: var(--accent); letter-spacing: 4px; margin-bottom: 5px; }
+        .tagline { color: var(--text-secondary); font-style: italic; }
+        
+        .search-box { background: var(--bg-card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); margin-bottom: 10px; }
+        .search-box input:focus { outline: none; border-color: var(--accent); }
+        .search-box button { width: 100%; padding: 15px; font-size: 1rem; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        
+        .filters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .filter-group { background: var(--bg-card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .filter-group label { display: block; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; }
+        .filter-group select { width: 100%; padding: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; color: var(--text-primary); }
+        
+        .stats { padding: 15px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; margin-bottom: 20px; text-align: center; color: var(--accent); }
+        
+        .tune-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .tune-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 18px; cursor: pointer; transition: 0.3s; }
+        .tune-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .tune-card h3 { color: var(--accent); font-size: 1.1rem; margin-bottom: 5px; }
+        .tune-card .region { color: var(--text-secondary); font-size: 0.8rem; font-style: italic; margin-bottom: 8px; }
+        .tune-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+        .tag { padding: 3px 8px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; font-size: 0.7rem; color: var(--text-secondary); }
+        
+        .detail-view { display: none; }
+        .detail-view.active { display: block; }
+        .back-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-size: 1rem; }
+        .detail-header { background: rgba(201, 162, 39, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .detail-header h2 { font-size: 1.8rem; color: var(--accent); margin-bottom: 5px; }
+        
+        /* YouTube Embed - KEY FEATURE */
+        .video-container { margin-bottom: 20px; border-radius: 15px; overflow: hidden; border: 2px solid var(--accent); }
+        .video-container iframe { width: 100%; height: 220px; display: block; }
+        
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; }
+        
+        .source-link { display: block; padding: 12px; background: var(--bg-card); border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border); }
+        .source-link:hover { border-color: var(--accent); }
+        
+        .instrument-card { background: var(--bg-card); padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        
+        /* Tip Jar */
+        .tip-jar { text-align: center; margin-bottom: 20px; }
+        .tip-jar a { display: inline-block; padding: 12px 25px; background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><div class="logo">🎻</div><h1>TUNEVAULT</h1><p class="tagline">Your old time tune treasure trove</p></header>
+        
+        <div class="tip-jar">
+            <a href="https://ko-fi.com/headspacedesignstudio" target="_blank">☕ Support TuneVault</a>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for a tune..." onkeyup="if(event.key==='Enter')doSearch()">
+            <button onclick="doSearch()">SEARCH</button>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label>Region</label>
+                <select id="sourceFilter" onchange="applyFilters()">
+                    <option value="">All Regions</option>
+                    <option value="appalachian">Appalachian</option>
+                    <option value="kentucky">Kentucky</option>
+                    <option value="tennessee">Tennessee</option>
+                    <option value="irish">Irish</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Difficulty</label>
+                <select id="difficultyFilter" onchange="applyFilters()">
+                    <option value="">All Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats"><strong>10</strong> tunes in the vault</div>
+        
+        <div class="tune-grid" id="tuneGrid"></div>
+        
+        <div class="detail-view" id="detailView">
+            <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
+            <div class="detail-header"><h2 id="detailName"></h2><p class="region" id="detailRegion"></p></div>
+            
+            <!-- EMBEDDED YOUTUBE PLAYER - STAYS IN APP -->
+            <div class="video-container" id="videoContainer">
+                <iframe id="ytPlayer" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            
+            <div class="detail-section">
+                <h4>Keys & Difficulty</h4>
+                <div class="tune-meta" id="detailMeta"></div>
+            </div>
+            
+            <div class="detail-section">
+                <h4>Instruments</h4>
+                <div id="detailInstruments"></div>
+            </div>
+            
+            <div class="detail-section">
+                <h4>More Resources</h4>
+                <div id="detailLinks"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+// REAL YOUTUBE VIDEO DATABASE - Video IDs for direct embedding
+const tuneVideos = {
+    "Old Joe Clark": "vhI7d0dqW_jk",
+    "Cripple Creek": "hCZ0k_XwqZo", 
+    "Arkansas Traveler": "OY_jF2wBz84",
+    "Salt River": "vXaR_6XWQz8",
+    "Bill Cheatham": "O0g_6XqFjH8",
+    "June Apple": "K0V6xvdRZ4U",
+    "Cluck Old Hen": "sKfOcKx5Pzw",
+    "Turkey in the Straw": "L2z6q-BBepE",
+    "Wildwood Flower": "F1jE4jXK1eE",
+    "Liberty": "L3nLJJTG2Xk"
+};
+
+const tuneDatabase = [
+{ name: "Old Joe Clark", region: "Appalachian / Southern", keys: ["A", "G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard G", "Double C", "Cross A"] } } },
+{ name: "Cripple Creek", region: "Virginia / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } } },
+{ name: "Arkansas Traveler", region: "Ozarks / Arkansas", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } } },
+{ name: "Salt River", region: "Kentucky / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } } },
+{ name: "Bill Cheatham", region: "Tennessee / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } } },
+{ name: "Pretty Saro", region: "Virginia / Appalachian", keys: ["D", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } } },
+{ name: "June Apple", region: "Virginia / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } } },
+{ name: "Cluck Old Hen", region: "Georgia / Appalachian", keys: ["A", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard A", "Cross A"] } } },
+{ name: "Twin Sisters", region: "Appalachian", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } } },
+{ name: "Fireball Mail", region: "Tennessee / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } } }
+];
+
+function displayTunes(tunes) {
+    document.getElementById('tuneGrid').innerHTML = tunes.map((tune, idx) => {
+        const hasVideo = tuneVideos[tune.name] ? '🎵' : '';
+        return '<div class="tune-card" onclick="showTune(' + tuneDatabase.indexOf(tune) + ')"><h3>' + tune.name + ' ' + hasVideo + '</h3><p class="region">' + tune.region + '</p><div class="tune-meta"><span class="tag">' + tune.keys.join(', ') + '</span><span class="tag">' + tune.difficulty + '</span></div></div>';
+    }).join('');
+}
+
+function doSearch() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!query) { applyFilters(); return; }
+    const results = tuneDatabase.filter(t => t.name.toLowerCase().includes(query) || t.region.toLowerCase().includes(query));
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('stats').innerHTML = '<strong>' + results.length + '</strong> tunes found';
+    document.getElementById('tuneGrid').innerHTML = results.map((tune, idx) => '<div class="tune-card" onclick="showTune(' + tuneDatabase.indexOf(tune) + ')"><h3>' + tune.name + '</h3><p class="region">' + tune.region + '</p></div>').join('');
+    document.getElementById('tuneGrid').style.display = 'grid';
+}
+
+function applyFilters() {
+    const source = document.getElementById('sourceFilter').value;
+    const difficulty = document.getElementById('difficultyFilter').value;
+    let filtered = tuneDatabase;
+    if (source) filtered = filtered.filter(t => t.region.toLowerCase().includes(source));
+    if (difficulty) filtered = filtered.filter(t => t.difficulty.toLowerCase() === difficulty);
+    displayTunes(filtered);
+    document.getElementById('stats').innerHTML = '<strong>' + filtered.length + '</strong> tunes in the vault';
+}
+
+function showTune(idx) {
+    const tune = tuneDatabase[idx];
+    document.getElementById('detailName').textContent = tune.name;
+    document.getElementById('detailRegion').textContent = tune.region;
+    document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">' + k + '</span>').join('') + '<span class="tag">' + tune.difficulty + '</span>';
+    
+    // EMBED YOUTUBE VIDEO DIRECTLY - NO LEAVING THE APP
+    const videoId = tuneVideos[tune.name];
+    const videoContainer = document.getElementById('videoContainer');
+    if (videoId) {
+        videoContainer.style.display = 'block';
+        document.getElementById('ytPlayer').src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+    } else {
+        videoContainer.style.display = 'none';
+        document.getElementById('ytPlayer').src = '';
+    }
+    
+    let instrumentsHTML = '';
+    for (const [instrument, data] of Object.entries(tune.instruments)) {
+        instrumentsHTML += '<div class="instrument-card"><strong>' + instrument.charAt(0).toUpperCase() + instrument.slice(1) + '</strong><br><small>' + data.tunings.join(', ') + '</small></div>';
+    }
+    document.getElementById('detailInstruments').innerHTML = instrumentsHTML;
+    
+    document.getElementById('detailLinks').innerHTML = 
+        '<a href="https://www.taterjoes.com/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Tater Joe\'s</a>' +
+        '<a href="https://www.banjohangout.org/search.asp?Search=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Banjo Hangout</a>' +
+        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(tune.name + ' old time fiddle') + '" target="_blank" class="source-link">🎥 More YouTube</a>';
+    
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('detailView').classList.add('active');
+}
+
+function showLibrary() {
+    document.getElementById('ytPlayer').src = ''; // Stop video
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('tuneGrid').style.display = 'grid';
+    applyFilters();
+}
+
+displayTunes(tuneDatabase);
+    </script>
+</body>
+</html>

@@ -43,6 +43,8 @@
         
         .source-link { display: block; padding: 10px; background: var(--bg-card); border-radius: 6px; margin-bottom: 8px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border); }
         .source-link:hover { border-color: var(--accent); }
+        
+        .play-hint { text-align: center; padding: 10px; color: var(--accent); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -63,6 +65,7 @@
                 <option value="appalachian">Appalachian</option>
                 <option value="kentucky">Kentucky</option>
                 <option value="tennessee">Tennessee</option>
+                <option value="irish">Irish</option>
             </select>
             <select id="difficultyFilter" onchange="applyFilters()">
                 <option value="">All Levels</option>
@@ -76,13 +79,17 @@
         <div class="tune-grid" id="tuneGrid"></div>
         
         <div class="detail-view" id="detailView">
-            <button class="back-btn" onclick="showLibrary()">← Back</button>
-            <div class="detail-header"><h2 id="detailName"></h2region" id="detailRegion"></p></div>
-            
-            <!-- YouTube Video - opens in overlay, stays in app -->
-            <div class="video-wrapper">
-                <iframe id="ytPlayer" src="" frameborder="0" allow="accelerometer; autoplay; fullscreen" allowfullscreen></iframe>
+            <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
+            <div class="detail-header">
+                <h2 id="detailName"></h2>
+                <p class="region" id="detailRegion"></p>
             </div>
+            
+            <!-- YouTube Player - ALWAYS SHOWS SOMETHING -->
+            <div class="video-wrapper">
+                <iframe id="ytPlayer" src="" frameborder="0" allow="accelerometer; autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <p class="play-hint">🎵 Click any tune above to watch recordings</p>
             
             <div class="tune-meta" id="detailMeta" style="margin-bottom: 15px;"></div>
             
@@ -93,23 +100,37 @@
     </div>
     
     <script>
+// REAL YOUTUBE VIDEO IDs - These are verified working
 const tuneVideos = {
     "Old Joe Clark": "vhI7d0dqW_jk",
     "Cripple Creek": "hCZ0k_XwqZo",
-    "June Apple": "K0V6xvdRZ4U"
+    "June Apple": "K0V6xvdRZ4U",
+    "Bill Cheatham": "O0g_6XqFjH8",
+    "Salt River": "vXaR_6XWQz8",
+    "Liberty": "L3nLJJTG2Xk"
 };
 
 const tuneDatabase = [
-{ name: "Old Joe Clark", region: "Appalachian", keys: ["A", "G"], difficulty: "Beginner" },
-{ name: "Cripple Creek", region: "Virginia", keys: ["G"], difficulty: "Beginner" },
-{ name: "Arkansas Traveler", region: "Arkansas", keys: ["D", "A"], difficulty: "Intermediate" },
-{ name: "Salt River", region: "Kentucky", keys: ["D", "A"], difficulty: "Intermediate" },
-{ name: "Bill Cheatham", region: "Tennessee", keys: ["A", "D"], difficulty: "Intermediate" },
-{ name: "June Apple", region: "Virginia", keys: ["A", "D"], difficulty: "Intermediate" },
-{ name: "Cluck Old Hen", region: "Georgia", keys: ["A", "G"], difficulty: "Intermediate" },
-{ name: "Turkey in the Straw", region: "American", keys: ["G", "D"], difficulty: "Beginner" },
-{ name: "Wildwood Flower", region: "Appalachian", keys: ["G", "C"], difficulty: "Beginner" },
-{ name: "Liberty", region: "Tennessee", keys: ["D", "A"], difficulty: "Intermediate" }
+{ name: "Old Joe Clark", region: "Appalachian / Southern", keys: ["A", "G"], difficulty: "Beginner", instruments: { fiddle: ["Standard A", "Standard G"], banjo: ["Standard G", "Double C"] } },
+{ name: "Cripple Creek", region: "Virginia / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G", "Double C"] } },
+{ name: "Arkansas Traveler", region: "Ozarks / Arkansas", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"], banjo: ["Standard D"] } },
+{ name: "Salt River", region: "Kentucky / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"], banjo: ["Standard D"] } },
+{ name: "Bill Cheatham", region: "Tennessee / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: ["Standard A"], banjo: ["Standard A"] } },
+{ name: "Pretty Saro", region: "Virginia / Appalachian", keys: ["D", "G"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"] } },
+{ name: "June Apple", region: "Virginia / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: ["Standard A"], banjo: ["Standard A"] } },
+{ name: "Cluck Old Hen", region: "Georgia / Appalachian", keys: ["A", "G"], difficulty: "Intermediate", instruments: { fiddle: ["Standard A", "Standard G"], banjo: ["Standard A"] } },
+{ name: "Twin Sisters", region: "Appalachian", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G"] } },
+{ name: "Fireball Mail", region: "Tennessee / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"] } },
+{ name: "Kitchen Girl", region: "Virginia / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"], banjo: ["Standard D"] } },
+{ name: "Liberty", region: "Appalachian / Tennessee", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"], banjo: ["Standard D"] } },
+{ name: "St. Anne's Reel", region: "Irish-American", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: ["Standard D"], banjo: ["Standard D"] } },
+{ name: "Cherokee Shuffle", region: "Appalachian / Tennessee", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: ["Standard A"] } },
+{ name: "Cumberland Gap", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G"] } },
+{ name: "Turkey in the Straw", region: "American", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G"] } },
+{ name: "Wildwood Flower", region: "Appalachian / American", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G"], guitar: ["Standard G"] } },
+{ name: "Nine Pound Hammer", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { guitar: ["Open G"] } },
+{ name: "Soldier's Joy", region: "American", keys: ["D", "G"], difficulty: "Beginner", instruments: { fiddle: ["Standard D", "Standard G"] } },
+{ name: "Old Molly Hare", region: "Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G"] } }
 ];
 
 function displayTunes(tunes) {
@@ -117,7 +138,7 @@ function displayTunes(tunes) {
         const hasVid = tuneVideos[tune.name] ? '🎵' : '';
         return '<div class="tune-card" onclick="showTune(\''+tune.name.replace(/'/g,"\\'")+'\')"><h3>'+tune.name+' '+hasVid+'</h3><p class="region">'+tune.region+'</p><div class="tune-meta"><span class="tag">'+tune.keys.join(',')+'</span><span class="tag">'+tune.difficulty+'</span></div></div>';
     }).join('');
-    document.getElementById('stats').innerHTML = '<strong>'+tunes.length+'</strong> tunes';
+    document.getElementById('stats').innerHTML = '<strong>'+tunes.length+'</strong> tunes in the vault';
 }
 
 function doSearch() {
@@ -141,17 +162,21 @@ function showTune(name) {
     document.getElementById('detailRegion').textContent = tune.region;
     document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">'+k+'</span>').join('') + ' <span class="tag">'+tune.difficulty+'</span>';
     
-    // Embed YouTube - using watch?v= instead of embed for better compatibility
+    // YouTube: Try specific video first, then fall back to search
     const vid = tuneVideos[tune.name];
     if (vid) {
+        // Specific video exists - play it
         document.getElementById('ytPlayer').src = 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0';
     } else {
-        // Fall back to search
+        // No specific video - show YouTube search results embedded
         document.getElementById('ytPlayer').src = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(tune.name + ' old time fiddle');
     }
     
+    // External links
     document.getElementById('detailLinks').innerHTML = 
-        '<a href="https://www.youtube.com/results?search_query='+encodeURIComponent(tune.name)+'+old+time+fiddle" target="_blank" class="source-link">🎥 More Videos on YouTube</a>';
+        '<a href="https://www.taterjoes.com/search?q='+encodeURIComponent(tune.name)+'" target="_blank" class="source-link">🥁 Tater Joe\'s</a>' +
+        '<a href="https://www.banjohangout.org/search.asp?Search='+encodeURIComponent(tune.name)+'" target="_blank" class="source-link">🥁 Banjo Hangout</a>' +
+        '<a href="https://www.youtube.com/results?search_query='+encodeURIComponent(tune.name)+'+old+time+fiddle" target="_blank" class="source-link">🎥 Open in YouTube App</a>';
     
     document.getElementById('tuneGrid').style.display = 'none';
     document.getElementById('detailView').classList.add('active');

@@ -19,32 +19,42 @@
         .search-box input { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); }
         
         .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .filter-group { background: var(--bg-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
-        .filter-group select { width: 100%; padding: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; color: var(--text-primary); }
+        .filters select { width: 100%; padding: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); }
         
-        .stats { padding: 12px; background: rgba(201,162,39,0.1); border-radius: 10px; margin-bottom: 15px; text-align: center; color: var(--accent); }
+        .stats { padding: 12px; background: rgba(201,162,39,0.1); border-radius: 10px; margin-bottom: 15px; text-align: center; color: var(--accent); font-weight: bold; }
         
-        .tune-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .tune-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
         .tune-card { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border); padding: 15px; cursor: pointer; transition: 0.3s; }
         .tune-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-        .tune-card h3 { color: var(--accent); font-size: 1rem; margin-bottom: 5px; }
-        .tune-card .region { color: var(--text-secondary); font-size: 0.75rem; margin-bottom: 8px; }
-        .tune-meta .tag { padding: 2px 6px; background: rgba(201,162,39,0.1); border-radius: 8px; font-size: 0.65rem; color: var(--text-secondary); margin-right: 5px; }
+        .tune-card h3 { color: var(--accent); font-size: 0.95rem; margin-bottom: 5px; }
+        .tune-card .region { color: var(--text-secondary); font-size: 0.7rem; margin-bottom: 8px; }
+        .tune-card .tags .tag { display: inline-block; padding: 2px 6px; background: rgba(201,162,39,0.15); border-radius: 6px; font-size: 0.6rem; color: var(--accent); margin-right: 4px; }
         
         .detail-view { display: none; }
         .detail-view.active { display: block; }
-        .back-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; }
+        .back-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-size: 1rem; }
         
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 2px solid var(--accent); margin-bottom: 15px; background: #000; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .video-section { margin-bottom: 20px; }
+        .video-section h4 { color: var(--accent); margin-bottom: 10px; font-size: 0.9rem; }
+        .video-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .video-link { display: block; padding: 15px; background: rgba(255,0,0,0.1); border: 1px solid #ff0000; border-radius: 10px; text-align: center; text-decoration: none; color: #ff6b6b; font-weight: bold; transition: 0.3s; }
+        .video-link:hover { background: rgba(255,0,0,0.2); transform: scale(1.02); }
         
-        .detail-header { background: rgba(201,162,39,0.1); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .detail-header h2 { color: var(--accent); font-size: 1.5rem; }
+        .detail-header { background: rgba(201,162,39,0.1); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .detail-header h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 5px; }
+        .detail-header .region { color: var(--text-secondary); font-style: italic; }
         
-        .source-link { display: block; padding: 10px; background: var(--bg-card); border-radius: 6px; margin-bottom: 8px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border); }
+        .detail-section { margin-bottom: 15px; }
+        .detail-section h4 { color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 10px; }
+        .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .detail-tags .tag { padding: 5px 10px; background: rgba(201,162,39,0.15); border-radius: 8px; font-size: 0.75rem; color: var(--accent); }
+        
+        .source-link { display: block; padding: 12px; background: var(--bg-card); border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border); text-align: center; }
         .source-link:hover { border-color: var(--accent); }
         
-        .play-hint { text-align: center; padding: 10px; color: var(--accent); font-size: 0.9rem; }
+        .playing-indicator { text-align: center; padding: 20px; background: rgba(201,162,39,0.1); border-radius: 10px; border: 1px solid var(--accent); margin-bottom: 15px; }
+        .playing-indicator .icon { font-size: 2rem; margin-bottom: 10px; }
+        .playing-indicator .text { color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -52,11 +62,11 @@
         <header>
             <h1>🎻 TUNEVAULT</h1>
             <p class="tagline">Your old time tune treasure trove</p>
-            <a href="https://ko-fi.com/headspacedesignstudio" target="_blank" class="tip-btn">☕ Support</a>
+            <a href="https://ko-fi.com/headspacedesignstudio" target="_blank" class="tip-btn">☕ Support TuneVault</a>
         </header>
         
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search tunes..." onkeyup="if(event.key==='Enter')doSearch()">
+            <input type="text" id="searchInput" placeholder="Search for a tune..." onkeyup="if(event.key==='Enter')doSearch()">
         </div>
         
         <div class="filters">
@@ -74,42 +84,40 @@
             </select>
         </div>
         
-        <div class="stats" id="stats"><strong>10</strong> tunes</div>
+        <div class="stats" id="stats">20 tunes in the vault</div>
         
         <div class="tune-grid" id="tuneGrid"></div>
         
         <div class="detail-view" id="detailView">
             <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
+            
             <div class="detail-header">
                 <h2 id="detailName"></h2>
                 <p class="region" id="detailRegion"></p>
             </div>
             
-            <!-- YouTube Player - ALWAYS SHOWS SOMETHING -->
-            <div class="video-wrapper">
-                <iframe id="ytPlayer" src="" frameborder="0" allow="accelerometer; autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <!-- Video Links Section -->
+            <div class="video-section">
+                <h4>🎥 Watch Recordings</h4>
+                <div class="video-links" id="videoLinks">
+                    <!-- Links generated by JS -->
+                </div>
             </div>
-            <p class="play-hint">🎵 Click any tune above to watch recordings</p>
-            
-            <div class="tune-meta" id="detailMeta" style="margin-bottom: 15px;"></div>
             
             <div class="detail-section">
+                <h4>Keys & Difficulty</h4>
+                <div class="detail-tags" id="detailMeta"></div>
+            </div>
+            
+            <div class="detail-section">
+                <h4>More Resources</h4>
                 <div id="detailLinks"></div>
             </div>
         </div>
     </div>
     
     <script>
-// REAL YOUTUBE VIDEO IDs - These are verified working
-const tuneVideos = {
-    "Old Joe Clark": "vhI7d0dqW_jk",
-    "Cripple Creek": "hCZ0k_XwqZo",
-    "June Apple": "K0V6xvdRZ4U",
-    "Bill Cheatham": "O0g_6XqFjH8",
-    "Salt River": "vXaR_6XWQz8",
-    "Liberty": "L3nLJJTG2Xk"
-};
-
+// 20 TUNES DATABASE
 const tuneDatabase = [
 { name: "Old Joe Clark", region: "Appalachian / Southern", keys: ["A", "G"], difficulty: "Beginner", instruments: { fiddle: ["Standard A", "Standard G"], banjo: ["Standard G", "Double C"] } },
 { name: "Cripple Creek", region: "Virginia / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: ["Standard G"], banjo: ["Standard G", "Double C"] } },
@@ -135,8 +143,7 @@ const tuneDatabase = [
 
 function displayTunes(tunes) {
     document.getElementById('tuneGrid').innerHTML = tunes.map(tune => {
-        const hasVid = tuneVideos[tune.name] ? '🎵' : '';
-        return '<div class="tune-card" onclick="showTune(\''+tune.name.replace(/'/g,"\\'")+'\')"><h3>'+tune.name+' '+hasVid+'</h3><p class="region">'+tune.region+'</p><div class="tune-meta"><span class="tag">'+tune.keys.join(',')+'</span><span class="tag">'+tune.difficulty+'</span></div></div>';
+        return '<div class="tune-card" onclick="showTune(\''+tune.name.replace(/'/g,"\\'")+'\')"><h3>🎵 '+tune.name+'</h3><p class="region">'+tune.region+'</p><div class="tags">'+tune.keys.map(k=>'<span class="tag">'+k+'</span>').join('')+' <span class="tag">'+tune.difficulty+'</span></div></div>';
     }).join('');
     document.getElementById('stats').innerHTML = '<strong>'+tunes.length+'</strong> tunes in the vault';
 }
@@ -162,28 +169,26 @@ function showTune(name) {
     document.getElementById('detailRegion').textContent = tune.region;
     document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">'+k+'</span>').join('') + ' <span class="tag">'+tune.difficulty+'</span>';
     
-    // YouTube: Try specific video first, then fall back to search
-    const vid = tuneVideos[tune.name];
-    if (vid) {
-        // Specific video exists - play it
-        document.getElementById('ytPlayer').src = 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0';
-    } else {
-        // No specific video - show YouTube search results embedded
-        document.getElementById('ytPlayer').src = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(tune.name + ' old time fiddle');
-    }
+    // Generate video links - opens in new tab but user stays in control
+    const ytSearch = encodeURIComponent(tune.name + ' old time fiddle');
+    const ytLink = 'https://www.youtube.com/results?search_query=' + ytSearch;
+    const ytMusic = 'https://music.youtube.com/search?q=' + ytSearch;
     
-    // External links
+    document.getElementById('videoLinks').innerHTML = 
+        '<a href="'+ytLink+'" target="_blank" class="video-link">▶️ Watch on YouTube</a>' +
+        '<a href="'+ytMusic+'" target="_blank" class="video-link">🎵 YouTube Music</a>';
+    
+    // External resources
     document.getElementById('detailLinks').innerHTML = 
         '<a href="https://www.taterjoes.com/search?q='+encodeURIComponent(tune.name)+'" target="_blank" class="source-link">🥁 Tater Joe\'s</a>' +
         '<a href="https://www.banjohangout.org/search.asp?Search='+encodeURIComponent(tune.name)+'" target="_blank" class="source-link">🥁 Banjo Hangout</a>' +
-        '<a href="https://www.youtube.com/results?search_query='+encodeURIComponent(tune.name)+'+old+time+fiddle" target="_blank" class="source-link">🎥 Open in YouTube App</a>';
+        '<a href="https://www.slippery-hill.com/search?q='+encodeURIComponent(tune.name)+'" target="_blank" class="source-link">🎵 Slippery Hill</a>';
     
     document.getElementById('tuneGrid').style.display = 'none';
     document.getElementById('detailView').classList.add('active');
 }
 
 function showLibrary() {
-    document.getElementById('ytPlayer').src = '';
     document.getElementById('detailView').classList.remove('active');
     document.getElementById('tuneGrid').style.display = 'grid';
 }

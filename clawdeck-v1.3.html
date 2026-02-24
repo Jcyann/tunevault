@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦞 Claw Deck</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-panel: #111827;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --border: #1f2937;
+        }
+        
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); min-height: 100vh; color: var(--text-primary); padding: 15px; background-image: radial-gradient(ellipse at 10% 10%, rgba(59,130,246,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 90%, rgba(139,92,246,0.08) 0%, transparent 50%); }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(59,130,246,0.15) 100%); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { font-size: 1.8rem; }
+        .logo h1 { font-size: 1.4rem; background: linear-gradient(90deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+        .header-status { display: flex; align-items: center; gap: 15px; }
+        .system-pills { display: flex; gap: 8px; }
+        .system-pill { padding: 4px 10px; background: rgba(0,0,0,0.3); border-radius: 12px; font-size: 0.65rem; display: flex; align-items: center; gap: 4px; }
+        .system-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green); }
+        .status-badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; color: #10b981; font-size: 0.65rem; }
+        .status-dot { width: 5px; height: 5px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        /* DATETIME - VERY TOP */
+        .datetime-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 5px; }
+        .greeting { font-size: 1.1rem; color: var(--accent-cyan); }
+        .time-display { font-size: 1.8rem; font-weight: 200; font-variant-numeric: tabular-nums; }
+        
+        /* GRID */
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+        @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+        
+        .panel { background: var(--bg-panel); border-radius: 12px; padding: 14px; border: 1px solid var(--border); }
+        .panel-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 10px; }
+        
+        /* ZEN QUOTE */
+        .quote-section { grid-column: span 2; background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(59,130,246,0.2) 100%); border: 1px solid rgba(139,92,246,0.3); border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 12px; }
+        @media (max-width: 800px) { .quote-section { grid-column: span 1; } }
+        .quote-text { font-size: 1.2rem; font-style: italic; line-height: 1.5; color: #e0e7ff; }
+        .quote-author { margin-top: 6px; font-size: 0.75rem; color: var(--text-secondary); }
+        
+        /* TEAMS DROPDOWN - HORIZONTAL */
+        .teams-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+        @media (max-width: 900px) { .teams-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 600px) { .teams-grid { grid-template-columns: 1fr 1fr; } }
+        .team-card { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .team-card:hover { border-color: var(--accent-purple); }
+        .team-card.selected { border-color: var(--accent-purple); background: rgba(139,92,246,0.1); }
+        .team-emoji { font-size: 1.3rem; }
+        .team-name { font-size: 0.75rem; font-weight: 600; margin-top: 4px; }
+        
+        /* TEAM DETAILS PANEL */
+        .team-details { grid-column: span 2; background: var(--bg-panel); border-radius: 12px; padding: 14px; border: 1px solid var(--accent-purple); margin-bottom: 12px; display: none; }
+        .team-details.active { display: block; }
+        @media (max-width: 800px) { .team-details { grid-column: span 1; } }
+        .team-detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .team-detail-title { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .team-detail-close { cursor: pointer; font-size: 0.8rem; color: var(--text-secondary); }
+        .team-detail-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        @media (max-width: 600px) { .team-detail-items { grid-template-columns: 1fr; } }
+        .team-detail-item { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
+        .team-detail-label { font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; }
+        .team-detail-value { font-size: 0.85rem; margin-top: 2px; }
+        
+        /* PRIORITIES */
+        .priority-list { list-style: none; }
+        .priority-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .priority-item:last-child { border-bottom: none; }
+        .priority-num { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: bold; }
+        .p1 { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .p2 { background: rgba(245,158,11,0.2); color: #f59e0b; }
+        .p3 { background: rgba(59,130,246,0.2); color: #3b82f6; }
+        .priority-text { flex: 1; font-size: 0.8rem; }
+        
+        /* FINANCE */
+        .finance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .finance-item { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
+        .finance-label { font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; }
+        .finance-value { font-size: 1rem; font-weight: 600; margin-top: 2px; }
+        .finance-value.income { color: #10b981; }
+        .finance-value.debt { color: #ef4444; }
+        .finance-value.goal { color: #3b82f6; }
+        
+        /* FUND BAR */
+        .fund-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .fund-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .fund-title { font-weight: 600; }
+        .fund-target { color: var(--accent-cyan); font-size: 0.8rem; }
+        .fund-bar { height: 12px; background: rgba(0,0,0,0.5); border-radius: 6px; overflow: hidden; }
+        .fund-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 6px; transition: width 0.5s; }
+        .fund-stats { display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.7rem; color: var(--text-secondary); }
+        
+        /* TO-DO */
+        .todo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .todo-column h4 { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; }
+        .todo-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.8rem; }
+        .todo-checkbox { width: 14px; height: 14px; accent-color: var(--accent-green); }
+        
+        /* LINKS - BOTTOM */
+        .links-section { margin-top: 12px; }
+        .links-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+        .link-btn { padding: 8px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; color: #60a5fa; text-decoration: none; font-size: 0.7rem; }
+        .link-btn:hover { background: rgba(59,130,246,0.2); }
+        
+        /* SETTINGS */
+        .settings-btn { position: fixed; bottom: 20px; right: 20px; padding: 10px 14px; background: var(--accent-purple); border: none; border-radius: 20px; color: white; cursor: pointer; font-size: 0.8rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-panel); border-radius: 14px; padding: 20px; max-width: 300px; width: 90%; border: 1px solid var(--border); }
+        .modal h2 { margin-bottom: 14px; font-size: 1rem; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 3px; color: var(--text-secondary); font-size: 0.75rem; }
+        .form-group input { width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 5px; color: var(--text-primary); font-size: 0.9rem; }
+        .btn-save { width: 100%; padding: 8px; background: var(--accent-purple); border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 0.85rem; }
+        .btn-cancel { width: 100%; padding: 8px; margin-top: 6px; background: transparent; border: 1px solid var(--border); border-radius: 5px; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem; }
+        
+        /* REDDIT */
+        .reddit-card { background: linear-gradient(135deg, rgba(255,69,0,0.15) 0%, rgba(255,140,0,0.15) 100%); border: 1px solid rgba(255,69,0,0.3); }
+        .karma-value { font-size: 1.3rem; color: #ff4500; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🦞</span>
+                <h1>CLAW DECK</h1>
+            </div>
+            <div class="header-status">
+                <div class="system-pills">
+                    <div class="system-pill"><span class="dot"></span>Gateway</div>
+                    <div class="system-pill"><span class="dot"></span>Browser</div>
+                    <div class="system-pill"><span class="dot"></span>GitHub</div>
+                </div>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>ALL SYSTEMS</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- DATETIME - VERY TOP -->
+        <div class="datetime-bar">
+            <div class="greeting" id="greeting">Good morning</div>
+            <div class="time-display" id="timeDisplay">--:--</div>
+        </div>
+        
+        <!-- ZEN QUOTE -->
+        <div class="quote-section">
+            <div class="quote-text" id="quoteText">"Small daily improvements are the key to staggering long-term results."</div>
+            <div class="quote-author">— Daily Wisdom</div>
+        </div>
+        
+        <!-- GRID -->
+        <div class="grid">
+            <!-- LEFT COLUMN -->
+            <div>
+                <!-- TEAMS - HORIZONTAL -->
+                <div class="panel">
+                    <div class="panel-title">🏢 TEAMS</div>
+                    <div class="teams-grid">
+                        <div class="team-card" onclick="showTeam('finance')">
+                            <div class="team-emoji">💰</div>
+                            <div class="team-name">Finance</div>
+                        </div>
+                        <div class="team-card" onclick="showTeam('canada')">
+                            <div class="team-emoji">🇨🇦</div>
+                            <div class="team-name">Canada</div>
+                        </div>
+                        <div class="team-card" onclick="showTeam('tunevault')">
+                            <div class="team-emoji">🎻</div>
+                            <div class="team-name">TuneVault</div>
+                        </div>
+                        <div class="team-card" onclick="showTeam('tintype')">
+                            <div class="team-emoji">📸</div>
+                            <div class="team-name">Tintype</div>
+                        </div>
+                        <div class="team-card" onclick="showTeam('reddit')">
+                            <div class="team-emoji">🤖</div>
+                            <div class="team-name">Reddit</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- TEAM DETAILS -->
+                <div class="team-details active" id="teamDetails">
+                    <div class="team-detail-header">
+                        <div class="team-detail-title"><span id="teamEmoji">💰</span><span id="teamTitle">Finance</span></div>
+                        <div class="team-detail-close" onclick="closeTeamDetails()">✕</div>
+                    </div>
+                    <div class="team-detail-items" id="teamDetailItems">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                
+                <!-- PRIORITIES -->
+                <div class="panel" style="margin-top: 12px;">
+                    <div class="panel-title">🎯 PRIORITIES</div>
+                    <ul class="priority-list">
+                        <li class="priority-item"><span class="priority-num p1">1</span><span class="priority-text">Maximize savings → Canada</span></li>
+                        <li class="priority-item"><span class="priority-num p2">2</span><span class="priority-text">Build passive income</span></li>
+                        <li class="priority-item"><span class="priority-num p3">3</span><span class="priority-text">Research BC property</span></li>
+                    </ul>
+                </div>
+                
+                <!-- FINANCE -->
+                <div class="panel" style="margin-top: 12px;">
+                    <div class="panel-title">💰 FINANCE</div>
+                    <div class="finance-grid">
+                        <div class="finance-item"><div class="finance-label">Teaching</div><div class="finance-value income">$5,494</div></div>
+                        <div class="finance-item"><div class="finance-label">Side Income</div><div class="finance-value income">~$1,500</div></div>
+                        <div class="finance-item"><div class="finance-label">Expenses</div><div class="finance-value">$1,400</div></div>
+                        <div class="finance-item"><div class="finance-label">Savings</div><div class="finance-value goal">~$5,600</div></div>
+                    </div>
+                    <div class="fund-section">
+                        <div class="fund-header"><span class="fund-title">🇨🇦 Canada Fund</span><span class="fund-target">Target: $<span id="targetAmount">7,000</span></span></div>
+                        <div class="fund-bar"><div class="fund-fill" id="fundFill" style="width: 0%;"></div></div>
+                        <div class="fund-stats"><span>$<span id="currentAmount">0</span> saved</span><span id="percentText">0%</span></div>
+                    </div>
+                </div>
+                
+                <!-- TO-DO -->
+                <div class="panel" style="margin-top: 12px;">
+                    <div class="panel-title">📋 TO-DO</div>
+                    <div class="todo-grid">
+                        <div class="todo-column">
+                            <h4>⏳ TODO</h4>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Move $ to Canada</label>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Decide debt strategy</label>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Research BC property</label>
+                        </div>
+                        <div class="todo-column">
+                            <h4>✅ DONE</h4>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> RBC account</label>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Reddit karma</label>
+                            <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Life plan</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN -->
+            <div>
+                <!-- STOCKS -->
+                <div class="panel">
+                    <div class="panel-title">📈 STOCKS</div>
+                    <div style="display: grid; gap: 6px;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span style="font-weight: 600; color: var(--accent-yellow);">IREN</span>
+                            <span>$40.83</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span style="font-weight: 600; color: var(--accent-yellow);">GLDM</span>
+                            <span>$103.12</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span style="font-weight: 600; color: var(--accent-yellow);">BTC</span>
+                            <span>$95,420</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DEBT -->
+                <div class="panel" style="margin-top: 12px;">
+                    <div class="panel-title">💳 DEBT</div>
+                    <div style="display: grid; gap: 6px;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span>Citi Simplicity</span>
+                            <span style="color: #ef4444;">$6,497</span>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; display: flex; justify-content: space-between;">
+                            <span>Other Cards</span>
+                            <span style="color: #ef4444;">$5,432</span>
+                        </div>
+                        <div style="background: rgba(239,68,68,0.15); padding: 10px; border-radius: 6px; text-align: center; margin-top: 4px;">
+                            <div style="font-size: 0.65rem; color: var(--text-secondary);">TOTAL</div>
+                            <div style="font-size: 1.2rem; color: #ef4444; font-weight: bold;">$11,929</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- REDDIT -->
+                <div class="panel reddit-card" style="margin-top: 12px;">
+                    <div class="panel-title">🤖 REDDIT</div>
+                    <div style="text-align: center; padding: 10px;">
+                        <div class="karma-value">Building...</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary);">u/Dear_Morning2950</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LINKS - BOTTOM -->
+        <div class="links-section">
+            <div class="panel-title" style="margin-bottom: 8px;">🔗 TOOLS & PROJECTS</div>
+            <div class="links-grid">
+                <a href="https://jcyann.github.io/tunevault/" target="_blank" class="link-btn">🎵 TuneVault</a>
+                <a href="https://jcyann.github.io/tunevault/voice-control.html" target="_blank" class="link-btn">🎤 Voice</a>
+                <a href="https://jcyann.github.io/tunevault/daily-zen.html" target="_blank" class="link-btn">🧘 Daily Zen</a>
+                <a href="https://jcyann.github.io/tunevault/money.html" target="_blank" class="link-btn">💰 Money</a>
+                <a href="https://jcyann.github.io/tunevault/task-master.html" target="_blank" class="link-btn">📝 Tasks</a>
+                <a href="https://www.reddit.com/r/Bluegrass/" target="_blank" class="link-btn">💚 r/Bluegrass</a>
+                <a href="https://www.reddit.com/r/banjo/" target="_blank" class="link-btn">🥄 r/banjo</a>
+                <a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" class="link-btn">👤 Reddit</a>
+                <a href="https://github.com/Jcyann" target="_blank" class="link-btn">🐙 GitHub</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SETTINGS -->
+    <button class="settings-btn" onclick="openSettings()">⚙️</button>
+    
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>⚙️ Canada Fund</h2>
+            <div class="form-group">
+                <label>Target ($)</label>
+                <input type="number" id="settingsTarget" value="7000">
+            </div>
+            <div class="form-group">
+                <label>Current ($)</label>
+                <input type="number" id="settingsCurrent" value="0">
+            </div>
+            <button class="btn-save" onclick="saveSettings()">Save</button>
+            <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        // DATA
+        let data = JSON.parse(localStorage.getItem('clawdeck-v4')) || { target: 7000, current: 0 };
+        
+        // TEAMS CONFIG
+        const teams = {
+            finance: { emoji: '💰', title: 'Finance', items: [
+                { label: 'Income', value: '$6,994/mo' },
+                { label: 'Expenses', value: '$1,400/mo' },
+                { label: 'Savings', value: '~$5,600/mo' },
+                { label: 'Debt', value: '$11,929' },
+                { label: 'Focus', value: 'Tax hold' },
+                { label: 'Next', value: 'Transfer $' }
+            ]},
+            canada: { emoji: '🇨🇦', title: 'Canada Plan', items: [
+                { label: 'Status', value: 'Planning' },
+                { label: 'Account', value: 'RBC ready' },
+                { label: 'Goal', value: '$7,000' },
+                { label: 'Saved', value: '$0' },
+                { label: 'Focus', value: 'Property' },
+                { label: 'Next', value: 'Transfer $' }
+            ]},
+            tunevault: { emoji: '🎻', title: 'TuneVault', items: [
+                { label: 'Status', value: 'Building' },
+                { label: 'Tunes', value: '60+' },
+                { label: 'Users', value: 'Growing' },
+                { label: 'Revenue', value: '$0' },
+                { label: 'Focus', value: 'Add tunes' },
+                { label: 'Next', value: 'Deploy' }
+            ]},
+            tintype: { emoji: '📸', title: 'Tintype', items: [
+                { label: 'Status', value: 'Active' },
+                { label: 'Income', value: '~$1,000/mo' },
+                { label: 'Focus', value: 'Bookings' },
+                { label: 'Next', value: 'Edit portfolio' }
+            ]},
+            reddit: { emoji: '🤖', title: 'Reddit', items: [
+                { label: 'Account', value: 'u/Dear_Morning2950' },
+                { label: 'Karma', value: 'Building' },
+                { label: 'Subs', value: '6 joined' },
+                { label: 'Focus', value: 'Build karma' },
+                { label: 'Next', value: 'Post content' }
+            ]}
+        };
+        
+        // TIME
+        function updateTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = hour < 12 ? '☀️ Good morning' : hour < 17 ? '🌞 Good afternoon' : '🌙 Good evening';
+            document.getElementById('greeting').textContent = greeting;
+            document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // TEAMS
+        function showTeam(key) {
+            const team = teams[key];
+            document.getElementById('teamEmoji').textContent = team.emoji;
+            document.getElementById('teamTitle').textContent = team.title;
+            document.getElementById('teamDetailItems').innerHTML = team.items.map(item => `
+                <div class="team-detail-item">
+                    <div class="team-detail-label">${item.label}</div>
+                    <div class="team-detail-value">${item.value}</div>
+                </div>
+            `).join('');
+            document.getElementById('teamDetails').classList.add('active');
+        }
+        
+        function closeTeamDetails() {
+            document.getElementById('teamDetails').classList.remove('active');
+        }
+        
+        // SETTINGS
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            document.getElementById('settingsTarget').value = data.target;
+            document.getElementById('settingsCurrent').value = data.current;
+        }
+        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
+        
+        function saveSettings() {
+            data.target = parseInt(document.getElementById('settingsTarget').value);
+            data.current = parseInt(document.getElementById('settingsCurrent').value);
+            localStorage.setItem('clawdeck-v4', JSON.stringify(data));
+            updateProgress();
+            closeSettings();
+        }
+        
+        function updateProgress() {
+            const percent = Math.min(100, (data.current / data.target) * 100);
+            document.getElementById('fundFill').style.width = percent + '%';
+            document.getElementById('targetAmount').textContent = data.target.toLocaleString();
+            document.getElementById('currentAmount').textContent = data.current.toLocaleString();
+            document.getElementById('percentText').textContent = Math.round(percent) + '%';
+        }
+        
+        updateProgress();
+    </script>
+</body>
+</html>

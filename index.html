@@ -2,409 +2,311 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦞 Claw Deck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Old Time Tune Library - Search 70+ fiddle tunes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TuneVault">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎻</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <title>🎻 TuneVault - Old Time Tune Library</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-card: rgba(255,255,255,0.03); --text-primary: #e8e4dc; --text-secondary: #7a756c; --accent: #c9a227; --border: rgba(201, 162, 39, 0.15); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Georgia', serif; background: var(--bg-primary); min-height: 100vh; color: var(--text-primary); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; padding: 40px 0 30px; }
+        .logo { font-size: 3rem; }
+        h1 { font-size: 2.5rem; color: var(--accent); letter-spacing: 4px; margin-bottom: 5px; }
+        .tagline { color: var(--text-secondary); font-style: italic; }
         
-        :root {
-            --bg-dark: #0a0e17;
-            --bg-panel: #111827;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-yellow: #f59e0b;
-            --accent-red: #ef4444;
-            --accent-purple: #8b5cf6;
-            --accent-cyan: #06b6d4;
-            --text-primary: #f9fafb;
-            --text-secondary: #9ca3af;
-            --border: #1f2937;
-        }
+        .search-box { background: var(--bg-card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-box input { flex: 1; padding: 15px; font-size: 1.1rem; border: 2px solid var(--border); border-radius: 10px; background: var(--bg-secondary); color: var(--text-primary); font-family: inherit; }
+        .search-box input:focus { outline: none; border-color: var(--accent); }
+        .search-box button { padding: 15px 30px; font-size: 1rem; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
-            min-height: 100vh;
-            color: var(--text-primary);
-            padding: 15px;
-            background-image: radial-gradient(ellipse at 10% 10%, rgba(59,130,246,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 90%, rgba(139,92,246,0.08) 0%, transparent 50%);
-        }
+        .filters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .filter-group { background: var(--bg-card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .filter-group label { display: block; color: var(--text-secondary); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; }
+        .filter-group select { width: 100%; padding: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 5px; color: var(--text-primary); }
         
-        .container { max-width: 1100px; margin: 0 auto; }
+        .stats { padding: 15px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; margin-bottom: 20px; text-align: center; color: var(--accent); }
         
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(59,130,246,0.15) 100%); border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { font-size: 2rem; }
-        .logo h1 { font-size: 1.5rem; background: linear-gradient(90deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .status-badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 15px; color: #10b981; font-size: 0.75rem; }
-        .status-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .tune-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .tune-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 18px; cursor: pointer; transition: 0.3s; }
+        .tune-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .tune-card h3 { color: var(--accent); font-size: 1.1rem; margin-bottom: 5px; }
+        .tune-card .region { color: var(--text-secondary); font-size: 0.8rem; font-style: italic; margin-bottom: 8px; }
+        .tune-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+        .tag { padding: 3px 8px; background: rgba(201, 162, 39, 0.1); border-radius: 10px; font-size: 0.7rem; color: var(--text-secondary); }
         
-        /* Quote */
-        .quote-section { background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(59,130,246,0.2) 100%); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(139,92,246,0.3); text-align: center; }
-        .quote-text { font-size: 1.3rem; font-style: italic; line-height: 1.5; color: #e0e7ff; }
-        .quote-author { margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary); }
+        /* Surprise Tune Banner */
+        .surprise-banner { background: linear-gradient(135deg, rgba(201, 162, 39, 0.2) 0%, rgba(139, 90, 43, 0.3) 100%); border: 2px solid var(--accent); border-radius: 15px; padding: 18px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s ease; animation: pulse-glow 2s ease-in-out infinite; }
+        .surprise-banner:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(201, 162, 39, 0.3); }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 10px rgba(201, 162, 39, 0.2); } 50% { box-shadow: 0 0 20px rgba(201, 162, 39, 0.4); } }
+        .surprise-icon { font-size: 2rem; }
+        .surprise-text { flex: 1; }
+        .surprise-text strong { display: block; color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .surprise-text span { color: var(--text-primary); font-size: 1.1rem; font-weight: bold; }
+        .surprise-btn { background: var(--accent); color: var(--bg-primary); padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
         
-        /* Top Bar */
-        .top-bar { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: flex-end; }
-        .datetime { text-align: right; }
-        .time-display { font-size: 2rem; font-weight: 200; font-variant-numeric: tabular-nums; }
-        .date-display { color: var(--text-secondary); font-size: 0.95rem; }
-        .greeting { font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 5px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
         
-        /* Grid */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        .detail-view { display: none; }
+        .detail-view.active { display: block; }
+        .detail-header { background: rgba(201, 162, 39, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .detail-header h2 { font-size: 1.8rem; color: var(--accent); margin-bottom: 5px; }
+        .detail-header .region { color: var(--text-secondary); font-style: italic; }
+        .detail-section { margin-bottom: 20px; }
+        .detail-section h4 { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; }
         
-        .panel { background: var(--bg-panel); border-radius: 12px; padding: 16px; border: 1px solid var(--border); }
-        .panel-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .instrument-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .instrument-card { background: var(--bg-secondary); border-radius: 10px; padding: 15px; border: 1px solid var(--border); }
+        .instrument-card h5 { color: var(--accent); font-size: 1rem; margin-bottom: 5px; }
         
-        .full-width { grid-column: span 3; }
-        @media (max-width: 900px) { .full-width { grid-column: span 2; } }
-        @media (max-width: 600px) { .full-width { grid-column: span 1; } }
+        .source-link { display: block; padding: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; color: var(--text-primary); text-decoration: none; font-size: 0.85rem; }
+        .source-link:hover { border-color: var(--accent); }
         
-        /* Money */
-        .money-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        @media (max-width: 600px) { .money-grid { grid-template-columns: 1fr 1fr; } }
-        .money-item { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; }
-        .money-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
-        .money-value { font-size: 1.1rem; font-weight: 600; margin-top: 4px; }
-        .money-value.income { color: #10b981; }
-        .money-value.debt { color: #ef4444; }
-        .money-value.goal { color: #3b82f6; }
+        .search-results { display: none; margin-bottom: 20px; }
+        .search-results.active { display: block; }
+        .search-result-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 10px; cursor: pointer; }
+        .search-result-item:hover { border-color: var(--accent); }
         
-        /* Canada Fund */
-        .fund-card { background: linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(139,92,246,0.15) 100%); border: 1px solid rgba(220,38,38,0.3); }
-        .fund-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .fund-title { font-weight: 600; }
-        .fund-target { color: var(--accent-cyan); font-size: 0.9rem; }
-        .fund-bar { height: 16px; background: rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; }
-        .fund-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 8px; transition: width 0.5s; }
-        .fund-stats { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary); }
-        
-        /* Stocks */
-        .stock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .stock-item { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: center; }
-        .stock-ticker { font-weight: 600; color: var(--accent-yellow); }
-        .stock-price { font-size: 0.9rem; margin-top: 2px; }
-        .stock-change { font-size: 0.75rem; }
-        .stock-change.up { color: #10b981; }
-        .stock-change.down { color: #ef4444; }
-        
-        /* Priorities */
-        .priority-list { list-style: none; }
-        .priority-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-        .priority-item:last-child { border-bottom: none; }
-        .priority-num { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; }
-        .p1 { background: rgba(239,68,68,0.2); color: #ef4444; }
-        .p2 { background: rgba(245,158,11,0.2); color: #f59e0b; }
-        .p3 { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        .priority-text { flex: 1; font-size: 0.85rem; }
-        
-        /* Teams - Dropdown */
-        .team-dropdown { margin-top: 10px; }
-        .team-select { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; cursor: pointer; }
-        .team-details { margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; display: none; }
-        .team-details.active { display: block; }
-        .team-detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
-        .team-detail-row:last-child { border-bottom: none; }
-        
-        /* Quick Add */
-        .quick-add { display: flex; gap: 8px; margin-top: 10px; }
-        .quick-add input { flex: 1; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; }
-        .quick-add button { padding: 8px 16px; background: var(--accent-purple); border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600; }
-        
-        /* To-Do */
-        .todo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .todo-column h4 { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; }
-        .todo-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 0.85rem; cursor: pointer; }
-        .todo-checkbox { width: 16px; height: 16px; accent-color: var(--accent-green); }
-        
-        /* Links */
-        .links-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-        .link-btn { padding: 8px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; color: #60a5fa; text-decoration: none; font-size: 0.75rem; }
-        .link-btn:hover { background: rgba(59,130,246,0.2); }
-        
-        /* System */
-        .system-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .system-item { text-align: center; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px; }
-        .system-icon { font-size: 1rem; }
-        .system-label { font-size: 0.6rem; color: var(--text-secondary); }
-        .system-value { font-size: 0.7rem; }
-        
-        /* Reddit */
-        .reddit-card { background: linear-gradient(135deg, rgba(255,69,0,0.15) 0%, rgba(255,140,0,0.15) 100%); border: 1px solid rgba(255,69,0,0.3); }
-        .karma-value { font-size: 1.5rem; color: #ff4500; font-weight: bold; }
-        
-        /* Settings Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: var(--bg-panel); border-radius: 16px; padding: 24px; max-width: 350px; width: 90%; border: 1px solid var(--border); }
-        .modal h2 { margin-bottom: 16px; color: var(--accent-purple); }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; margin-bottom: 4px; color: var(--text-secondary); font-size: 0.8rem; }
-        .form-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); }
-        .btn-save { width: 100%; padding: 10px; background: var(--accent-purple); border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600; }
-        .btn-cancel { width: 100%; padding: 10px; margin-top: 8px; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; }
+        @media (max-width: 600px) { .filters { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">
-                <span class="logo-icon">🦞</span>
-                <h1>CLAW DECK</h1>
-            </div>
-            <div class="header-right">
-                <button onclick="openSettings()" style="padding: 8px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">⚙️</button>
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    <span>ALL SYSTEMS</span>
-                </div>
-            </div>
-        </header>
+        <header><div class="logo">🎻</div><h1>TUNEVAULT</h1><p class="tagline">Your old time tune treasure trove</p></header>
         
-        <!-- Quote -->
-        <div class="quote-section">
-            <div class="quote-text" id="quoteText">"Small daily improvements are the key to staggering long-term results."</div>
-            <div class="quote-author">— Daily Wisdom</div>
+        <!-- Tip Jar -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <a href="https://ko-fi.com/headspacedesignstudio" target="_blank" style="display: inline-block; padding: 10px 22px; background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); color: white; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 0.85rem;">☕ Support TuneVault</a>
         </div>
         
-        <!-- Date/Time -->
-        <div class="top-bar">
-            <div></div>
-            <div class="datetime">
-                <div class="greeting" id="greeting">Good morning</div>
-                <div class="time-display" id="timeDisplay">--:--</div>
-                <div class="date-display" id="dateDisplay">Loading...</div>
+        <!-- Surprise Tune of the Day -->
+        <div class="surprise-banner" id="surpriseBanner" onclick="showSurpriseTune()">
+            <div class="surprise-icon">🎁</div>
+            <div class="surprise-text">
+                <strong>Today's Surprise Tune</strong>
+                <span id="surpriseTuneName">Click to discover!</span>
             </div>
+            <div class="surprise-btn">LISTEN</div>
         </div>
         
-        <div class="grid">
-            <!-- Money -->
-            <div class="panel full-width">
-                <div class="panel-title">💰 MONEY STATUS</div>
-                <div class="money-grid">
-                    <div class="money-item"><div class="money-label">Teaching</div><div class="money-value income">$5,494.57</div></div>
-                    <div class="money-item"><div class="money-label">Side Income</div><div class="money-value income">~$1,500</div></div>
-                    <div class="money-item"><div class="money-label">Expenses</div><div class="money-value">$1,400</div></div>
-                    <div class="money-item"><div class="money-label">Savings</div><div class="money-value goal">~$5,600</div></div>
-                </div>
-            </div>
-            
-            <!-- Canada Fund -->
-            <div class="panel full-width fund-card">
-                <div class="fund-header">
-                    <div class="fund-title">🇨🇦 CANADA FUND</div>
-                    <div class="fund-target">Target: $<span id="targetAmount">7,000</span></div>
-                </div>
-                <div class="fund-bar"><div class="fund-fill" id="fundFill" style="width: 0%;"></div></div>
-                <div class="fund-stats"><span>$<span id="currentAmount">0</span> saved</span><span id="percentText">0%</span></div>
-            </div>
-            
-            <!-- Stocks -->
-            <div class="panel">
-                <div class="panel-title">📈 STOCKS</div>
-                <div class="stock-grid">
-                    <div class="stock-item"><div class="stock-ticker">IREN</div><div class="stock-price">$40.83</div><div class="stock-change down">-0.17%</div></div>
-                    <div class="stock-item"><div class="stock-ticker">GLDM</div><div class="stock-price">$103.12</div><div class="stock-change up">+4.56%</div></div>
-                    <div class="stock-item"><div class="stock-ticker">BTC</div><div class="stock-price">$95,420</div><div class="stock-change up">+2.1%</div></div>
-                </div>
-            </div>
-            
-            <!-- Debt -->
-            <div class="panel">
-                <div class="panel-title">💳 DEBT</div>
-                <div class="money-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div class="money-item"><div class="money-label">Citi</div><div class="money-value debt">$6,497</div></div>
-                    <div class="money-item"><div class="money-label">Other</div><div class="money-value debt">$5,432</div></div>
-                </div>
-                <div style="margin-top: 10px; padding: 10px; background: rgba(239,68,68,0.1); border-radius: 8px; text-align: center;">
-                    <div class="money-label">TOTAL</div>
-                    <div class="money-value debt" style="font-size: 1.3rem;">$11,929</div>
-                </div>
-            </div>
-            
-            <!-- Priorities -->
-            <div class="panel">
-                <div class="panel-title">🎯 PRIORITIES</div>
-                <ul class="priority-list" id="priorityList">
-                    <li class="priority-item"><span class="priority-num p1">1</span><span class="priority-text">Maximize savings → Canada</span></li>
-                    <li class="priority-item"><span class="priority-num p2">2</span><span class="priority-text">Build passive income</span></li>
-                    <li class="priority-item"><span class="priority-num p3">3</span><span class="priority-text">Research BC property</span></li>
-                </ul>
-                <div class="quick-add">
-                    <input type="text" id="quickAddInput" placeholder="Add priority...">
-                    <button onclick="addPriority()">+</button>
-                </div>
-            </div>
-            
-            <!-- Teams -->
-            <div class="panel">
-                <div class="panel-title">🏢 TEAMS</div>
-                <select class="team-select" id="teamSelect" onchange="showTeamDetails()">
-                    <option value="finance">💰 Finance</option>
-                    <option value="canada">🇨🇦 Canada Plan</option>
-                    <option value="tunevault">🎻 TuneVault</option>
-                    <option value="tintype">📸 Tintype</option>
-                    <option value="reddit">🤖 Reddit/Auto</option>
-                </select>
-                <div class="team-details active" id="teamDetails">
-                    <div class="team-detail-row"><span>Status</span><span style="color:#10b981">Active</span></div>
-                    <div class="team-detail-row"><span>Focus</span><span>Tax hold</span></div>
-                    <div class="team-detail-row"><span>Next</span><span>Transfer $</span></div>
-                </div>
-            </div>
-            
-            <!-- Reddit -->
-            <div class="panel reddit-card">
-                <div class="panel-title">🤖 REDDIT</div>
-                <div style="text-align: center; padding: 10px;">
-                    <div class="karma-value">Building...</div>
-                    <div class="money-label">u/Dear_Morning2950</div>
-                </div>
-                <div class="links-grid" style="justify-content: center;">
-                    <a href="https://www.reddit.com/user/Dear_Morning2950/" target="_blank" class="link-btn">View</a>
-                </div>
-            </div>
-            
-            <!-- Links -->
-            <div class="panel">
-                <div class="panel-title">🔗 LINKS</div>
-                <div class="links-grid">
-                    <a href="https://jcyann.github.io/tunevault/" target="_blank" class="link-btn">🎻 TuneVault</a>
-                    <a href="https://jcyann.github.io/tunevault/voice-control.html" target="_blank" class="link-btn">🎤 Voice</a>
-                    <a href="https://www.reddit.com/r/Bluegrass/" target="_blank" class="link-btn">💚 r/Bluegrass</a>
-                    <a href="https://www.reddit.com/r/banjo/" target="_blank" class="link-btn">🥄 r/banjo</a>
-                    <a href="https://github.com/Jcyann" target="_blank" class="link-btn">🐙 GitHub</a>
-                </div>
-            </div>
-            
-            <!-- To-Do -->
-            <div class="panel full-width">
-                <div class="panel-title">📋 TO-DO & ACCOMPLISHMENTS</div>
-                <div class="todo-grid">
-                    <div class="todo-column">
-                        <h4>⏳ TO-DO</h4>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Move $ to Canada RBC</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Decide debt strategy</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> Research BC property</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox"> BC teaching credential</label>
-                    </div>
-                    <div class="todo-column">
-                        <h4>✅ DONE</h4>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> RBC account set up</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Reddit karma building</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Voice control panel</label>
-                        <label class="todo-item"><input type="checkbox" class="todo-checkbox" checked> Life plan documented</label>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- System -->
-            <div class="panel">
-                <div class="panel-title">⚙️ SYSTEM</div>
-                <div class="system-grid">
-                    <div class="system-item"><div class="system-icon">🌐</div><div class="system-label">Gateway</div><div class="system-value" style="color:#10b981">Online</div></div>
-                    <div class="system-item"><div class="system-icon">🔵</div><div class="system-label">Browser</div><div class="system-value" style="color:#10b981">Ready</div></div>
-                    <div class="system-item"><div class="system-icon">🐙</div><div class="system-label">GitHub</div><div class="system-value">@Jcyann</div></div>
-                    <div class="system-item"><div class="system-icon">⏰</div><div class="system-label">Next Cron</div><div class="system-value">1hr</div></div>
-                </div>
-            </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for a tune..." onkeypress="if(event.key==='Enter')doSearch()">
+            <button onclick="doSearch()">SEARCH</button>
         </div>
-    </div>
-    
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <h2>⚙️ Settings</h2>
-            <div class="form-group">
-                <label>Canada Fund Target ($)</label>
-                <input type="number" id="settingsTarget" value="7000">
-            </div>
-            <div class="form-group">
-                <label>Current Savings ($)</label>
-                <input type="number" id="settingsCurrent" value="0">
-            </div>
-            <button class="btn-save" onclick="saveSettings()">Save</button>
-            <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+        
+        <div class="filters">
+            <div class="filter-group"><label>Instrument</label><select id="instrumentFilter" onchange="applyFilters()"><option value="">All</option><option value="fiddle">Fiddle</option><option value="banjo">Banjo</option><option value="guitar">Guitar</option></select></div>
+            <div class="filter-group"><label>Region</label><select id="sourceFilter" onchange="applyFilters()"><option value="">All</option><option value="appalachian">Appalachian</option><option value="kentucky">Kentucky</option><option value="virginia">Virginia</option><option value="georgia">Georgia</option></select></div>
+            <div class="filter-group"><label>Difficulty</label><select id="difficultyFilter" onchange="applyFilters()"><option value="">All</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option></select></div>
+            <div class="filter-group"><label>Key</label><select id="keyFilter" onchange="applyFilters()"><option value="">All</option><option value="G">G</option><option value="D">D</option><option value="A">A</option></select></div>
+        </div>
+        
+        <div class="stats" id="stats"><strong id="tuneCount">73</strong> tunes in the vault</div>
+        
+        <div class="search-results" id="searchResults"></div>
+        <div class="tune-grid" id="tuneGrid"></div>
+        
+        <div class="detail-view" id="detailView">
+            <button class="back-btn" onclick="showLibrary()">← Back to Library</button>
+            <div class="detail-header"><h2 id="detailName"></h2><p class="region" id="detailRegion"></p></div>
+            <div class="detail-section"><h4>Keys & Difficulty</h4><div class="tune-meta" id="detailMeta"></div></div>
+            <div class="detail-section"><h4>Instruments</h4><div class="instrument-row" id="detailInstruments"></div></div>
+            <div class="detail-section"><h4>External Resources</h4><div id="detailLinks"></div></div>
         </div>
     </div>
     
     <script>
-        // Data
-        let data = JSON.parse(localStorage.getItem('clawdeck-data')) || { target: 7000, current: 0 };
-        
-        // Team details
-        const teamInfo = {
-            finance: { status: 'Active', focus: 'Tax hold', next: 'Transfer $' },
-            canada: { status: 'Planning', focus: 'Property research', next: 'Explore BC' },
-            tunevault: { status: 'Building', focus: 'Add tunes', next: 'Deploy' },
-            tintype: { status: 'Active', focus: 'Bookings', next: 'Edit portfolio' },
-            reddit: { status: 'Active', focus: 'Build karma', next: 'Post content' }
-        };
-        
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting = hour < 12 ? '☀️ Good morning' : hour < 17 ? '🌞 Good afternoon' : '🌙 Good evening';
-            document.getElementById('greeting').textContent = greeting;
-            document.getElementById('timeDisplay').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-        
-        // Team dropdown
-        function showTeamDetails() {
-            const team = document.getElementById('teamSelect').value;
-            const details = teamInfo[team];
-            document.getElementById('teamDetails').innerHTML = `
-                <div class="team-detail-row"><span>Status</span><span style="color:#10b981">${details.status}</span></div>
-                <div class="team-detail-row"><span>Focus</span><span>${details.focus}</span></div>
-                <div class="team-detail-row"><span>Next</span><span>${details.next}</span></div>
-            `;
-        }
-        
-        // Quick add priority
-        function addPriority() {
-            const input = document.getElementById('quickAddInput');
-            if (input.value.trim()) {
-                const list = document.getElementById('priorityList');
-                const li = document.createElement('li');
-                li.className = 'priority-item';
-                li.innerHTML = `<span class="priority-num p3">3</span><span class="priority-text">${input.value}</span>`;
-                list.appendChild(li);
-                input.value = '';
-            }
-        }
-        document.getElementById('quickAddInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') addPriority(); });
-        
-        // Settings
-        function openSettings() { document.getElementById('settingsModal').classList.add('active'); document.getElementById('settingsTarget').value = data.target; document.getElementById('settingsCurrent').value = data.current; }
-        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
-        
-        function saveSettings() {
-            data.target = parseInt(document.getElementById('settingsTarget').value);
-            data.current = parseInt(document.getElementById('settingsCurrent').value);
-            localStorage.setItem('clawdeck-data', JSON.stringify(data));
-            updateProgress();
-            closeSettings();
-        }
-        
-        function updateProgress() {
-            const percent = Math.min(100, (data.current / data.target) * 100);
-            document.getElementById('fundFill').style.width = percent + '%';
-            document.getElementById('targetAmount').textContent = data.target.toLocaleString();
-            document.getElementById('currentAmount').textContent = data.current.toLocaleString();
-            document.getElementById('percentText').textContent = Math.round(percent) + '%';
-        }
-        
-        updateProgress();
+const tuneDatabase = [
+{ name: "Old Joe Clark", region: "Appalachian / Southern", keys: ["A", "G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard G", "Double C", "Cross A"] } }, description: "One of the most popular old time tunes." },
+{ name: "Cripple Creek", region: "Virginia / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Classic first tune." },
+{ name: "Arkansas Traveler", region: "Ozarks / Arkansas", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Classic fiddler's tune." },
+{ name: "Salt River", region: "Kentucky / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Up-tempo D tune." },
+{ name: "Bill Cheatham", region: "Tennessee / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Beautiful A-tune." },
+{ name: "Pretty Saro", region: "Virginia / Appalachian", keys: ["D", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Haunting modal tune." },
+{ name: "June Apple", region: "Virginia / Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Driving A tune." },
+{ name: "Cluck Old Hen", region: "Georgia / Appalachian", keys: ["A", "G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A", "Standard G"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Ragtime-style tune." },
+{ name: "Twin Sisters", region: "Appalachian", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple G tune." },
+{ name: "Fireball Mail", region: "Tennessee / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Fast-paced D tune." },
+{ name: "Kitchen Girl", region: "Virginia / Appalachian", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Great for cross-tuning." },
+{ name: "Liberty", region: "Appalachian / Tennessee", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D", "Double D"] } }, description: "Classic cross-tuning tune." },
+{ name: "St. Anne's Reel", region: "Irish-American", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Popular reel." },
+{ name: "Cherokee Shuffle", region: "Appalachian / Tennessee", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "A-tune with shuffle." },
+{ name: "Cumberland Gap", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple G tune." },
+{ name: "Turkey in the Straw", region: "American", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous folk tune." },
+{ name: "Wildwood Flower", region: "Appalachian / American", keys: ["G", "C"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard G"] } }, description: "Classic American folk." },
+{ name: "Nine Pound Hammer", region: "Appalachian / Kentucky", keys: ["G"], difficulty: "Beginner", instruments: { guitar: { tunings: ["Open G"] } }, description: "Blues/old time classic." },
+{ name: "Over the Waterfall", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic tune." },
+{ name: "Rocky Top", region: "Tennessee / Country", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous country tune." },
+{ name: "I'll Fly Away", region: "Gospel / Appalachian", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Gospel standard." },
+{ name: "Soldier's Joy", region: "American", keys: ["D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Essential tune." },
+{ name: "Cindy", region: "Appalachian", keys: ["D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Famous folk tune." },
+{ name: "Fisher's Hornpipe", region: "Irish-American", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic hornpipe." },
+{ name: "Blackberry Blossom", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Popular tune." },
+{ name: "Red Haired Boy", region: "Irish-American / Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Popular A tune." },
+{ name: "Devil's Dream", region: "Appalachian / Irish", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Famous reel." },
+{ name: "Mississippi Sawyer", region: "Midwest / Ozarks", keys: ["D", "A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Up-tempo D tune." },
+{ name: "Squirrel Hunters Reel", region: "Appalachian", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Fast reel." },
+{ name: "Sally Gooden", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] } }, description: "Classic tune." },
+{ name: "Jeff Sturgeon", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Virginia tune." },
+{ name: "Breaking Up Christmas", region: "Appalachian", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Christmas classic." },
+{ name: "Chinquapin Hunting", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "A tune." },
+{ name: "Little Liza Jane", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Simple, fun tune." },
+{ name: "Wayfaring Stranger", region: "Appalachian / Traditional", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard"] } }, description: "Haunting folk tune." },
+{ name: "Man of Constant Sorrow", region: "Appalachian", keys: ["D", "G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard D"] }, banjo: { tunings: ["Standard D"] }, guitar: { tunings: ["Standard"] } }, description: "Famous folk tune." },
+{ name: "Tom Dooley", region: "North Carolina / Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Famous folk tune." },
+{ name: "Shady Grove", region: "Appalachian / Virginia", keys: ["G", "D"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple tune." },
+{ name: "Boatman", region: "Appalachian / Southern", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Classic A tune." },
+{ name: "Greasy Coat", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Classic A tune." },
+{ name: "Salt Creek", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Virginia classic." },
+{ name: "Sandy Boys", region: "Appalachian", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "A tune." },
+{ name: "Stay All Night", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Simple A tune." },
+{ name: "Tater Patch", region: "Appalachian / Southern", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Simple tune." },
+{ name: "Granny Does Your Dog Bite", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Fun A tune." },
+{ name: "Quail is a Pretty Bird", region: "Appalachian", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Sweet A tune." },
+{ name: "Big Sciota", region: "Appalachian / Ohio", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] } }, description: "Ohio classic." },
+{ name: "Seneca Square Dance", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." },
+{ name: "Shove That Pig's Foot", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic tune." },
+{ name: "Temperance Reel", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Popular reel." },
+{ name: "Hangman's Reel", region: "Appalachian / Canada", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Famous reel." },
+{ name: "Half Past Four", region: "Appalachian", keys: ["A"], difficulty: "Advanced", instruments: { fiddle: { tunings: ["Standard A"] } }, description: "Complex A tune." },
+{ name: "Money Musk", region: "Scottish / American", keys: ["A", "D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Popular reel." },
+{ name: "Bonaparte's Retreat", region: "Appalachian", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "A tune." },
+{ name: "Angeline the Baker", region: "Irish-American", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Classic reel." },
+{ name: "Eighth of January", region: "American / Historical", keys: ["D"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard D"] } }, description: "Historical tune." },
+{ name: "Gray Cat", region: "Appalachian / Virginia", keys: ["D"], difficulty: "Advanced", instruments: { banjo: { tunings: ["Standard D"] } }, description: "Complex tune." },
+{ name: "John Brown's Dream", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G", "Double C"] } }, description: "Syncopated clawhammer." },
+{ name: "Banjo Pickin' Girl", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic clawhammer tune." },
+{ name: "John the Weaver", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] } }, description: "Classic Virginia tune." },
+{ name: "Dueling Banjos", region: "Appalachian / Delaware", keys: ["G"], difficulty: "Intermediate", instruments: { banjo: { tunings: ["Standard G"] }, guitar: { tunings: ["Standard"] } }, description: "Famous from Deliverance." },
+{ name: "Dance All Night", region: "Appalachian", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Dance tune." },
+{ name: "Flop-Eared Mule", region: "Appalachian / Southern", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Classic ragtime tune." },
+{ name: "Cotton Eyed Joe", region: "American / Southern", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Traditional folk tune." },
+{ name: "Green Willis", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G", "Double C"] } }, description: "Old-time favorite." },
+{ name: "Katy Hill", region: "Appalachian / Virginia", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A", "Cross A"] } }, description: "Simple A-tune for beginners." },
+{ name: "Little Billy Wilson", region: "Appalachian / North Carolina", keys: ["A"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Traditional North Carolina tune." },
+{ name: "Ida Red", region: "Appalachian / Virginia", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Old-time Virginia tune." },
+{ name: "Boys of Blue Hill", region: "New England / Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Classic New England tune." },
+{ name: "New Rigged Ship", region: "Irish-American", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Jig commonly played in old time." },
+{ name: "Sister Ann", region: "Appalachian", keys: ["G"], difficulty: "Intermediate", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Traditional tune." },
+{ name: "Out on the Ocean", region: "Irish-American", keys: ["G"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard G"] }, banjo: { tunings: ["Standard G"] } }, description: "Simple jig popular in old time circles." },
+{ name: "Ballydesmond Polka", region: "Irish-American", keys: ["A"], difficulty: "Beginner", instruments: { fiddle: { tunings: ["Standard A"] }, banjo: { tunings: ["Standard A"] } }, description: "Polka popular in old time music." }
+];
+
+function doSearch() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!query) { applyFilters(); return; }
+    
+    const results = tuneDatabase.filter(t => t.name.toLowerCase().includes(query) || t.region.toLowerCase().includes(query));
+    
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('searchResults').classList.add('active');
+    document.getElementById('stats').innerHTML = '<strong>' + results.length + '</strong> tunes found for "' + query + '"';
+    
+    document.getElementById('searchResults').innerHTML = results.map((tune, idx) => 
+        '<div class="search-result-item" onclick="showTune(' + idx + ')"><h3>' + tune.name + '</h3><p class="region">' + tune.region + '</p><div class="tune-meta"><span class="tag">' + tune.keys.join(', ') + '</span><span class="tag">' + tune.difficulty + '</span></div></div>'
+    ).join('');
+}
+
+function applyFilters() {
+    const instrument = document.getElementById('instrumentFilter').value;
+    const source = document.getElementById('sourceFilter').value;
+    const difficulty = document.getElementById('difficultyFilter').value;
+    const key = document.getElementById('keyFilter').value;
+    
+    let filtered = tuneDatabase;
+    if (instrument) filtered = filtered.filter(t => t.instruments[instrument]);
+    if (source) filtered = filtered.filter(t => t.region.toLowerCase().includes(source));
+    if (difficulty) filtered = filtered.filter(t => t.difficulty.toLowerCase() === difficulty);
+    if (key) filtered = filtered.filter(t => t.keys.includes(key));
+    
+    displayTunes(filtered);
+}
+
+// Surprise Tune of the Day - changes daily based on date
+function getDailySurpriseIndex() {
+    const today = new Date();
+    const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    return seed % tuneDatabase.length;
+}
+
+let currentSurpriseIdx = -1;
+
+function showSurpriseTune() {
+    if (currentSurpriseIdx === -1) {
+        currentSurpriseIdx = getDailySurpriseIndex();
+    } else {
+        // Get a random different tune on click
+        currentSurpriseIdx = Math.floor(Math.random() * tuneDatabase.length);
+    }
+    const tune = tuneDatabase[currentSurpriseIdx];
+    document.getElementById('surpriseTuneName').textContent = tune.name;
+    showTune(currentSurpriseIdx);
+}
+
+function displayTunes(tunes) {
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('tuneGrid').style.display = 'grid';
+    document.getElementById('stats').innerHTML = '<strong>' + tunes.length + '</strong> tunes in the vault';
+    
+    document.getElementById('tuneGrid').innerHTML = tunes.map((tune, idx) => {
+        const actualIdx = tuneDatabase.indexOf(tune);
+        return '<div class="tune-card" onclick="showTune(' + actualIdx + ')"><h3>' + tune.name + '</h3><p class="region">' + tune.region + '</p><div class="tune-meta"><span class="tag">' + tune.keys.join(', ') + '</span><span class="tag">' + tune.difficulty + '</span></div></div>';
+    }).join('');
+}
+
+function showTune(idx) {
+    const tune = tuneDatabase[idx];
+    document.getElementById('detailName').textContent = tune.name;
+    document.getElementById('detailRegion').textContent = tune.region;
+    document.getElementById('detailMeta').innerHTML = tune.keys.map(k => '<span class="tag">' + k + '</span>').join('') + '<span class="tag">' + tune.difficulty + '</span>';
+    
+    let instrumentsHTML = '';
+    for (const [instrument, data] of Object.entries(tune.instruments)) {
+        instrumentsHTML += '<div class="instrument-card"><h5>' + instrument.charAt(0).toUpperCase() + instrument.slice(1) + '</h5><p style="font-size:0.8rem;color:var(--text-secondary)">Tunings: ' + data.tunings.join(', ') + '</p></div>';
+    }
+    document.getElementById('detailInstruments').innerHTML = instrumentsHTML;
+    
+    document.getElementById('detailLinks').innerHTML = 
+        '<a href="https://www.taterjoes.com/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Tater Joe\'s - Search</a>' +
+        '<a href="https://www.banjohangout.org/search.asp?Search=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🥁 Banjo Hangout - Search</a>' +
+        '<a href="https://www.slippery-hill.com/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🎵 Slippery Hill - Search</a>' +
+        '<a href="https://www.loc.gov/search/?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">📚 Library of Congress - Search</a>' +
+        '<a href="https://tunepal.org/search?q=' + encodeURIComponent(tune.name) + '" target="_blank" class="source-link">🎼 TunePal - Search</a>' +
+        '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent(tune.name + ' old time fiddle') + '" target="_blank" class="source-link">🎥 YouTube - Search</a>';
+    
+    document.getElementById('tuneGrid').style.display = 'none';
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('detailView').classList.add('active');
+}
+
+function showLibrary() {
+    document.getElementById('detailView').classList.remove('active');
+    document.getElementById('searchResults').classList.remove('active');
+    document.getElementById('tuneGrid').style.display = 'grid';
+    applyFilters();
+}
+
+displayTunes(tuneDatabase);
+
+// PWA Service Worker for offline use
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
     </script>
 </body>
 </html>

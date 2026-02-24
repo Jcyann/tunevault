@@ -29,4 +29,24 @@
 - Checkpoint before change = safety
 
 ---
+
+# TuneVault Version Control
+
+## Before ANY major edit to TuneVault:
+
+1. Save current version:
+   ```bash
+   cp tunevault.html tunevault-vX.html
+   ```
+
+2. Commit checkpoint:
+   ```bash
+   git add -A && git commit -m "Checkpoint before [change]"
+   ```
+
+## TuneVault Version History
+- v1 - Tip jar added (Feb 24)
+- Current - tunevault.html (always the latest)
+
+---
 *Remember: Build ON TOP, not replace!*
